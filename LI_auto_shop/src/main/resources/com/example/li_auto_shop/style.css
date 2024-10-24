@@ -1,0 +1,8 @@
+.active {
+    -fx-background-color: midnightblue;
+    -fx-text-fill: white;
+}
+.notActive {
+    -fx-background-color: WHITESMOKE;
+    -fx-text-fill: black;
+}
