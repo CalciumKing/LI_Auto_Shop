@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: midnightblue;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.li_auto_shop.DashboardController">
+   <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="400.0" prefWidth="411.0">
+      <Label fx:id="welcomeText" layoutX="113.0" layoutY="29.0" text="Welcome, NAME HERE" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="35.0" />
+         </font>
+      </Label>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="410.0" layoutX="-12.0" layoutY="-10.0" stroke="BLACK" strokeType="INSIDE" width="99.0" />
+      <ImageView fitHeight="195.0" fitWidth="149.0" layoutX="424.0" layoutY="152.0" pickOnBounds="true" preserveRatio="true">
+         <Image url="@../../../../../../../../../../../Downloads/OCLogo.png" />
+      </ImageView>
+      <Button layoutY="42.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Page 1" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Button layoutY="82.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Page 1" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Button layoutY="126.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Page 1" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Button layoutY="169.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Page 1" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Button layoutY="276.0" mnemonicParsing="false" onAction="#LogOut" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Log Out" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+   </AnchorPane>
+   <Button layoutX="560.0" layoutY="1.0" mnemonicParsing="false" onAction="#Minimize" style="-fx-background-color: WHITESMOKE;" text="-" textFill="#0d00c5">
+      <font>
+         <Font name="System Bold" size="12.0" />
+      </font>
+   </Button>
+   <Button layoutX="582.0" layoutY="1.0" mnemonicParsing="false" onAction="#Close" style="-fx-background-color: WHITESMOKE;" text="X" textFill="#0d00c5">
+      <font>
+         <Font name="System Bold" size="12.0" />
+      </font>
+   </Button>
+</AnchorPane>

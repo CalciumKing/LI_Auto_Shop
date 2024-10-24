@@ -4,23 +4,22 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.util.regex.Pattern;
 
-public class MainController {
+public class SignupLoginController {
     // region Variables
     @FXML
-    private Label formText, welcomeText;
+    private Label formText;
     @FXML
     private Button login, signup;
     @FXML
-    private TextField username, email, password, confirmPassword;
+    private TextField username, email;
+    @FXML
+    private PasswordField password, confirmPassword;
     @FXML
     private Button forgotPassword, formButton, resetPasswordButton;
-    @FXML
-    private AnchorPane formPage, dashboardPage;
     // endregion
     // region Form
     @FXML
@@ -35,7 +34,7 @@ public class MainController {
             confirmPassword.setVisible(true);
             formButton.setText("Sign Up");
             forgotPassword.setVisible(false);
-        } else /*if (shortSignUp.contains("active"))*/ { // switching to login
+        } else { // switching to login
             formText.setText("Login Form");
             formButton.setText("Login");
             shortSignUp.remove("active");
@@ -47,6 +46,8 @@ public class MainController {
             formButton.setText("Login");
             password.setPromptText("Password:");
             forgotPassword.setVisible(true);
+            resetPasswordButton.setVisible(false);
+            formButton.setVisible(true);
         }
         ClearForm();
     }
@@ -55,20 +56,23 @@ public class MainController {
     private void FormSubmit() {
         if (ValidForm()) {
             try {
-                String name = (signup.getStyleClass().contains("active")) ? SQLUtils.Register(username.getText(), password.getText(), email.getText()) : SQLUtils.Login(username.getText(), password.getText(), email.getText());
-                formPage.setVisible(false);
-                dashboardPage.setVisible(true);
-                welcomeText.setText("Welcome, " + name);
-                ClearForm();
+                if (signup.getStyleClass().contains("active"))
+                    SQLUtils.Register(username.getText(), password.getText(), email.getText());
+                else
+                    SQLUtils.Login(username.getText(), password.getText(), email.getText());
             } catch (Exception ignored) {
-                ErrorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information from MainController", "There was an error retrieving the SQL information, or that user doesn't exist.");
+                Utils.ErrorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information from MainController", "There was an error retrieving the SQL information, or that user doesn't exist.");
             }
+            User user = new User(username.getText(), password.getText(), email.getText());
+            Utils.ChangeScene("dashboard.fxml");
+            ((Stage) formText.getScene().getWindow()).close();
+            DashboardController.WelcomeName(user.getUsername());
+            ClearForm();
         }
     }
     
     @FXML
     private void Forgot() {
-        forgotPassword.setVisible(false);
         resetPasswordButton.setVisible(true);
         forgotPassword.setVisible(true);
         formText.setText("Forgot Password");
@@ -87,7 +91,6 @@ public class MainController {
             resetPasswordButton.setVisible(false);
             formButton.setVisible(true);
             forgotPassword.setVisible(true);
-            formButton.setVisible(true);
             password.setPromptText("Password:");
             
             ObservableList<String> shortLogin = login.getStyleClass();
@@ -100,14 +103,13 @@ public class MainController {
     }
     
     // endregion
-    // region Utils
+    // region Form Utils
     private void ClearForm() {
         username.clear();
         email.clear();
         password.clear();
         confirmPassword.clear();
     }
-    
     private boolean ValidForm() {
         // region Regex Characters
         // . any single character
@@ -127,47 +129,34 @@ public class MainController {
         String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[/~`!@#$%^&*()_+{};:',<.>? =]).{8,}$";
         
         if (username.getText().isEmpty() || email.getText().isEmpty() || password.getText().isEmpty() || (signup.getStyleClass().contains("active") && confirmPassword.getText().isEmpty())) {
-            ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
+            Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
             return false;
         } else if (!Pattern.compile(emailRegex).matcher(email.getText()).matches()) {
-            ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Email", "Please Enter A Valid Email That Contains An '@' And A '.com'");
+            Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Email", "Please Enter A Valid Email That Contains An '@' And A '.com'");
             return false;
         } else if (!Pattern.compile(passwordRegex).matcher(password.getText()).matches()) {
-            ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Password", "Please Enter A Valid Password That Contains At Least 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number, and 1 Special Character");
+            Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Password", "Please Enter A Valid Password That Contains At Least 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number, and 1 Special Character");
             return false;
         } else if (signup.getStyleClass().contains("active") && !password.getText().equals(confirmPassword.getText())) {
-            ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Passwords Must Match", "Password And Confirm Password Must Match");
+            Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Passwords Must Match", "Password And Confirm Password Must Match");
             return false;
         } else if (!SQLUtils.ValidInfo(username.getText(), password.getText(), email.getText())) {
-            ErrorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Does Not Exist", "Please enter valid information for a user that does already exist.");
+            Utils.ErrorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Does Not Exist", "Please enter valid information for a user that does already exist.");
             return false;
         }
         return true;
-    }
-    public static void ErrorAlert(Alert.AlertType type, String title, String headerText, String contentText) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(headerText);
-        alert.setContentText(contentText);
-        alert.showAndWait();
-    }
-    @FXML
-    private void LogOut() {
-        formPage.setVisible(true);
-        dashboardPage.setVisible(false);
-        welcomeText.setText("Welcome, NAME HERE");
     }
     
     // endregion
     // region Window Settings
     @FXML
     private void Minimize(ActionEvent event) {
-        ((Stage) ((Button) event.getSource()).getScene().getWindow()).setIconified(true);
+        Utils.Minimize(event);
     }
     
     @FXML
     private void Close() {
-        System.exit(0);
+        Utils.Close();
     }
     
     // endregion
