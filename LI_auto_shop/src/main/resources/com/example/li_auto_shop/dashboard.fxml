@@ -12,8 +12,8 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: midnightblue;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.li_auto_shop.DashboardController">
-   <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="400.0" prefWidth="411.0">
-      <Label fx:id="testText" layoutX="113.0" layoutY="29.0" text="Welcome, NAME HERE" textFill="WHITE">
+   <AnchorPane fx:id="welcomePage" layoutX="10.0" layoutY="10.0" prefHeight="400.0" prefWidth="411.0" visible="false">
+      <Label fx:id="welcomeText" layoutX="113.0" layoutY="29.0" text="Welcome, NAME HERE" textFill="WHITE">
          <font>
             <Font name="System Bold" size="35.0" />
          </font>
@@ -22,36 +22,40 @@
          <Image url="@../../../../../../../../../../../Downloads/OCLogo.png" />
       </ImageView>
    </AnchorPane>
-   <AnchorPane prefHeight="410.0" prefWidth="606.0" visible="false">
-      <children>
-         <TableView layoutX="124.0" layoutY="43.0" prefHeight="215.0" prefWidth="458.0">
-           <columns>
-             <TableColumn prefWidth="75.0" text="C1" />
-             <TableColumn prefWidth="75.0" text="C2" />
-           </columns>
-         </TableView>
-         <Button layoutX="124.0" layoutY="282.0" mnemonicParsing="false" text="Add Item" />
-         <Button layoutX="125.0" layoutY="358.0" mnemonicParsing="false" text="Delete Item" />
-         <Button layoutX="124.0" layoutY="320.0" mnemonicParsing="false" text="Update Item" />
-         <Button layoutX="510.0" layoutY="338.0" mnemonicParsing="false" text="Clear Form" />
-         <TextField layoutX="266.0" layoutY="270.0" prefHeight="25.0" prefWidth="82.0" promptText="ID:" />
-         <TextField layoutX="266.0" layoutY="308.0" prefHeight="25.0" prefWidth="82.0" promptText="Vehicle Type:" />
-         <TextField layoutX="266.0" layoutY="346.0" prefHeight="25.0" prefWidth="82.0" promptText="Year:" />
-         <TextField layoutX="266.0" layoutY="380.0" prefHeight="25.0" prefWidth="82.0" promptText="Make:" />
-         <TextField layoutX="359.0" layoutY="270.0" prefHeight="25.0" prefWidth="82.0" promptText="Model:" />
-         <TextField layoutX="359.0" layoutY="308.0" prefHeight="25.0" prefWidth="82.0" promptText="Price:" />
-         <TextField layoutX="359.0" layoutY="346.0" prefHeight="25.0" prefWidth="82.0" promptText="Quantity:" />
-         <TextField layoutX="359.0" layoutY="380.0" prefHeight="25.0" prefWidth="82.0" promptText="Reorder:" />
-         <Button layoutX="519.0" layoutY="300.0" mnemonicParsing="false" text="Submit:" />
-      </children>
+   <AnchorPane fx:id="databasePage" prefHeight="410.0" prefWidth="606.0">
+      <TableView fx:id="table" layoutX="124.0" layoutY="43.0" prefHeight="215.0" prefWidth="458.0">
+         <columns>
+            <TableColumn fx:id="id_col" prefWidth="33.333274841308594" text="ID" />
+            <TableColumn fx:id="vehicle_type_col" prefWidth="87.33334350585938" text="Type" />
+            <TableColumn fx:id="year_col" prefWidth="54.00001525878906" text="Year" />
+            <TableColumn fx:id="make_col" prefWidth="43.99993896484375" text="Make" />
+            <TableColumn fx:id="model_col" prefWidth="50.0" text="Model" />
+            <TableColumn fx:id="price_col" prefWidth="56.6666259765625" text="Price" />
+            <TableColumn fx:id="quantity_in_stock_col" prefWidth="60.666595458984375" text="In Stock" />
+            <TableColumn fx:id="reorder_level_col" prefWidth="74.0" text="Reorder" />
+         </columns>
+      </TableView>
+      <Button fx:id="add_btn" layoutX="124.0" layoutY="282.0" mnemonicParsing="false" onAction="#SwitchFormAction" styleClass="active" text="Add Item" />
+      <Button fx:id="update_btn" layoutX="124.0" layoutY="320.0" mnemonicParsing="false" onAction="#SwitchFormAction" styleClass="notActive" text="Update Item" />
+      <Button fx:id="delete_btn" layoutX="125.0" layoutY="358.0" mnemonicParsing="false" onAction="#SwitchFormAction" styleClass="notActive" text="Delete Item" />
+      <Button layoutX="510.0" layoutY="338.0" mnemonicParsing="false" onAction="#ClearForm" styleClass="notActive" text="Clear Form" />
+      <TextField fx:id="id_field" layoutX="266.0" layoutY="270.0" prefHeight="25.0" prefWidth="82.0" promptText="ID:" />
+      <TextField fx:id="vehicleType_field" layoutX="266.0" layoutY="308.0" prefHeight="25.0" prefWidth="82.0" promptText="Vehicle Type:" />
+      <TextField fx:id="year_field" layoutX="266.0" layoutY="346.0" prefHeight="25.0" prefWidth="82.0" promptText="Year:" />
+      <TextField fx:id="make_field" layoutX="266.0" layoutY="380.0" prefHeight="25.0" prefWidth="82.0" promptText="Make:" />
+      <TextField fx:id="model_field" layoutX="359.0" layoutY="270.0" prefHeight="25.0" prefWidth="82.0" promptText="Model:" />
+      <TextField fx:id="price_field" layoutX="359.0" layoutY="308.0" prefHeight="25.0" prefWidth="82.0" promptText="Price:" />
+      <TextField fx:id="quantity_field" layoutX="359.0" layoutY="346.0" prefHeight="25.0" prefWidth="82.0" promptText="Quantity:" />
+      <TextField fx:id="reorder_field" layoutX="359.0" layoutY="380.0" prefHeight="25.0" prefWidth="82.0" promptText="Reorder:" />
+      <Button layoutX="519.0" layoutY="300.0" mnemonicParsing="false" onAction="#Submit" styleClass="notActive" text="Submit:" />
    </AnchorPane>
    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="410.0" stroke="BLACK" strokeType="INSIDE" width="99.0" />
-   <Button layoutX="13.0" layoutY="85.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Database" textFill="WHITE">
+   <Button layoutX="13.0" layoutY="85.0" mnemonicParsing="false" onAction="#WelcomePage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Welcome" textFill="WHITE">
       <font>
          <Font name="System Bold" size="12.0" />
       </font>
    </Button>
-   <Button layoutX="13.0" layoutY="129.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Page 2" textFill="WHITE">
+   <Button layoutX="13.0" layoutY="129.0" mnemonicParsing="false" onAction="#DatabasePage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Database" textFill="WHITE">
       <font>
          <Font name="System Bold" size="12.0" />
       </font>
@@ -71,12 +75,12 @@
          <Font name="System Bold" size="12.0" />
       </font>
    </Button>
-   <Button layoutX="560.0" layoutY="1.0" mnemonicParsing="false" onAction="#Minimize" style="-fx-background-color: WHITESMOKE;" text="-" textFill="#0d00c5">
+   <Button layoutX="560.0" layoutY="1.0" mnemonicParsing="false" onAction="#Minimize" styleClass="min" text="-" textFill="#0d00c5">
       <font>
          <Font name="System Bold" size="12.0" />
       </font>
    </Button>
-   <Button layoutX="582.0" layoutY="1.0" mnemonicParsing="false" onAction="#Close" style="-fx-background-color: WHITESMOKE;" text="X" textFill="#0d00c5">
+   <Button layoutX="582.0" layoutY="1.0" mnemonicParsing="false" onAction="#Close" styleClass="close" text="X" textFill="#0d00c5">
       <font>
          <Font name="System Bold" size="12.0" />
       </font>

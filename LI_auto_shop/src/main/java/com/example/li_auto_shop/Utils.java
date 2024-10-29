@@ -22,7 +22,6 @@ public class Utils {
             Stage stage = new Stage();
 //            DashboardController dbController = fxmlLoader.getController();
 //            DashboardController.WelcomeName(new SignupLoginController().GetUsername());
-            
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setTitle("Automotive Application");
             stage.setScene(scene);

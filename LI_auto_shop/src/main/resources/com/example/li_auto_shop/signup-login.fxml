@@ -16,12 +16,12 @@
         <Font name="System Bold" size="12.0" />
       </font>
     </Label>
-    <Button fx:id="login" layoutX="252.0" layoutY="106.0" mnemonicParsing="false" onAction="#ChangeForm" style="-fx-background-radius: 8px 0 0 8px;" styleClass="active" text="Login" textFill="WHITE">
+    <Button id="loginButton" fx:id="login" layoutX="252.0" layoutY="106.0" mnemonicParsing="false" onAction="#ChangeForm" styleClass="active" text="Login" textFill="WHITE">
       <font>
         <Font name="System Bold" size="12.0" />
       </font>
     </Button>
-    <Button fx:id="signup" layoutX="300.0" layoutY="106.0" mnemonicParsing="false" onAction="#ChangeForm" style="-fx-background-radius: 0 8px 8px 0;" styleClass="notActive" text="Signup">
+    <Button id="signupButton" fx:id="signup" layoutX="300.0" layoutY="106.0" mnemonicParsing="false" onAction="#ChangeForm" styleClass="notActive" text="Signup">
       <font>
         <Font name="System Bold" size="12.0" />
       </font>

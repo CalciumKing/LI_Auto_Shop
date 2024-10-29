@@ -1,8 +1,33 @@
+.close, .min {
+    -fx-background-color: WHITESMOKE;
+}
+.close:hover {
+    -fx-background-color: red;
+}
+.min:hover {
+    -fx-background-color: #4a4a4a;
+}
+
 .active {
     -fx-background-color: midnightblue;
     -fx-text-fill: white;
+    -fx-border-color:  WHITESMOKE;
 }
 .notActive {
     -fx-background-color: WHITESMOKE;
     -fx-text-fill: black;
+}
+.active, .notActive {
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+#loginButton {
+    -fx-background-radius: 8px 0 0 8px;
+}
+#signupButton {
+    -fx-background-radius: 0 8px 8px 0;
+}
+#loginButton, #signupButton {
+    -fx-border-radius: 0;
 }

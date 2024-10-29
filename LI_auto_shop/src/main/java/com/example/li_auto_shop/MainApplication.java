@@ -14,7 +14,7 @@ public class MainApplication extends Application {
     private double yOffset;
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("signup-login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("dashboard.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("Automotive Application");
