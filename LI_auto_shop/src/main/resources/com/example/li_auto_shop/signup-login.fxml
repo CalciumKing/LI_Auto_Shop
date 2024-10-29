@@ -28,12 +28,13 @@
     </Button>
     <TextField fx:id="email" layoutX="225.0" layoutY="146.0" promptText="Email Address:" style="-fx-background-radius: 8px;" />
     <TextField fx:id="username" layoutX="225.0" layoutY="179.0" promptText="Username:" style="-fx-background-radius: 8px;" />
-    <Button fx:id="formButton" layoutX="225.0" layoutY="278.0" mnemonicParsing="false" onAction="#FormSubmit" prefHeight="25.0" prefWidth="149.0" style="-fx-background-color: midnightblue;" text="Login" textFill="WHITE">
+    <PasswordField fx:id="password" layoutX="225.0" layoutY="211.0" promptText="Password:" style="-fx-background-radius: 8px;" />
+    <Button fx:id="forgotPassword" layoutX="244.0" layoutY="243.0" mnemonicParsing="false" onAction="#Forgot" style="-fx-background-radius: 8px;" styleClass="notActive" text="Forgot Password">
       <font>
         <Font name="System Bold" size="12.0" />
       </font>
     </Button>
-    <Button fx:id="forgotPassword" layoutX="244.0" layoutY="243.0" mnemonicParsing="false" onAction="#Forgot" style="-fx-background-radius: 8px;" styleClass="notActive" text="Forgot Password">
+    <Button fx:id="formButton" layoutX="225.0" layoutY="278.0" mnemonicParsing="false" onAction="#FormSubmit" prefHeight="25.0" prefWidth="149.0" style="-fx-background-color: midnightblue;" text="Login" textFill="WHITE">
       <font>
         <Font name="System Bold" size="12.0" />
       </font>
@@ -43,7 +44,6 @@
         <Font name="System Bold" size="12.0" />
       </font>
     </Button>
-    <PasswordField fx:id="password" layoutX="225.0" layoutY="211.0" promptText="Password:" style="-fx-background-radius: 8px;" />
     <PasswordField fx:id="confirmPassword" layoutX="225.0" layoutY="243.0" promptText="Confirm Password:" style="-fx-background-radius: 8px;" visible="false" />
   </AnchorPane>
   <Button layoutX="552.0" layoutY="1.0" mnemonicParsing="false" onAction="#Minimize" style="-fx-background-color: WHITESMOKE;" text="-" textFill="#0d00c5">

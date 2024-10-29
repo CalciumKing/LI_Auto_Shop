@@ -5,15 +5,17 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 public class DashboardController {
     @FXML
-    private static Label welcomeText;
+    private static Label testText;
+    @FXML
     public static void WelcomeName(String name) {
-        welcomeText.setText("Welcome, " + name);
+        testText.setText("Welcome, " + name);
     }
     @FXML
     private void LogOut() {
         Utils.ChangeScene("signup-login.fxml");
-        ((Stage) welcomeText.getScene().getWindow()).close();
-        DashboardController.WelcomeName("NAME HERE");
+        testText.getScene().getWindow().hide();
+//        new DashboardController().WelcomeName("This is a test");
+        WelcomeName("This is a test");
     }
     // region Window Settings
     @FXML

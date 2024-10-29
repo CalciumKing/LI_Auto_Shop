@@ -63,12 +63,18 @@ public class SignupLoginController {
             } catch (Exception ignored) {
                 Utils.ErrorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information from MainController", "There was an error retrieving the SQL information, or that user doesn't exist.");
             }
-            User user = new User(username.getText(), password.getText(), email.getText());
+//            User user = new User(username.getText(), password.getText(), email.getText());
             Utils.ChangeScene("dashboard.fxml");
-            ((Stage) formText.getScene().getWindow()).close();
-            DashboardController.WelcomeName(user.getUsername());
+//            System.out.println(user.getUsername());
+//            DashboardController dashboardController = new DashboardController();
+//            DashboardController.WelcomeName(user.getUsername());
+            formText.getScene().getWindow().hide();
             ClearForm();
         }
+    }
+    @FXML
+    public String GetUsername() {
+        return username.getText();
     }
     
     @FXML

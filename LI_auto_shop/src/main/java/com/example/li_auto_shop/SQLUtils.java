@@ -38,10 +38,17 @@ public class SQLUtils {
             prepared.setString(1, username);
             prepared.setString(2, password);
             prepared.setString(3, email);
-            prepared.executeQuery();
+            ResultSet result = prepared.executeQuery();
             System.out.println("working");
             // FORM ALWAYS RESULTS IN WORKING, EVEN WHEN USER IS INVALID, DOES NOT ADD TO TABLE THO
-            return true;
+            
+            if(result.next()) {
+                DashboardController.WelcomeName(result.getString("username"));
+                return true;
+            } else {
+                System.out.println("not working");
+                return false;
+            }
         } catch (Exception ignored) {
             Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
         }
