@@ -1,3 +1,10 @@
+.button:hover {
+    -fx-cursor: hand;
+}
+.bar:hover {
+    -fx-cursor: open_hand;
+}
+
 .close, .min {
     -fx-background-color: WHITESMOKE;
 }
@@ -20,6 +27,7 @@
 .active, .notActive {
     -fx-background-radius: 8px;
     -fx-border-radius: 8px;
+    -fx-label-padding: 2px;
 }
 
 #loginButton {

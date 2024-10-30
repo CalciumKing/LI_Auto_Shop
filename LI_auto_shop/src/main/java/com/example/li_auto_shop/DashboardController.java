@@ -1,24 +1,24 @@
 package com.example.li_auto_shop;
-import javafx.collections.FXCollections;
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-public class DashboardController  implements Initializable {
+
+public class DashboardController implements Initializable {
     // region Variables
     @FXML
-    private static Label welcomeText;
+    private Label welcomeText;
     @FXML
-    private AnchorPane welcomePage, databasePage;
-    
-    // region Table
+    private AnchorPane dashboard, welcomePage, databasePage;
+    // region Table Variables
     @FXML
     private Button add_btn, update_btn, delete_btn;
     @FXML
@@ -31,14 +31,8 @@ public class DashboardController  implements Initializable {
     private TableColumn<Item, Integer> year_col, quantity_in_stock_col, reorder_level_col;
     @FXML
     private TableColumn<Item, Double> price_col;
-    
     @FXML
     private ObservableList<Item> items;
-    //  = FXCollections.observableArrayList(
-    //            new Item("015", "Honda Civic", "2001", "Gen 3", "2.0", 35.00, 12, 2),
-    //            new Item("015", "Honda Civic", "2001", "Gen 3", "2.0", 35.00, 12, 2),
-    //            new Item("015", "Honda Civic", "2001", "Gen 3", "2.0", 35.00, 12, 2)
-    //    )
     
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -51,7 +45,7 @@ public class DashboardController  implements Initializable {
         quantity_in_stock_col.setCellValueFactory(new PropertyValueFactory<>("quantity_in_stock"));
         reorder_level_col.setCellValueFactory(new PropertyValueFactory<>("reorder_level"));
         ClearForm();
-        items = SQLUtils.RefreshTable();
+        items = new SQLUtils().RefreshTable();
         table.setItems(items);
     }
     // endregion
@@ -68,15 +62,25 @@ public class DashboardController  implements Initializable {
         databasePage.setVisible(true);
     }
     // endregion
-    @FXML
-    public static void WelcomeName(String name) {
+    public void WelcomeName(String name) {
         welcomeText.setText("Welcome, " + name);
     }
     // region Form
     @FXML
+    private void Selected() {
+        Item item = table.getSelectionModel().getSelectedItem();
+        id_field.setText(item.getId());
+        vehicleType_field.setText(item.getVehicle_type());
+        year_field.setText(item.getYear());
+        make_field.setText(item.getMake());
+        model_field.setText(item.getModel());
+        price_field.setText(String.valueOf(item.getPrice()));
+        quantity_field.setText(String.valueOf(item.getQuantity_in_stock()));
+        reorder_field.setText(String.valueOf(item.getReorder_level()));
+    }
+    @FXML
     private void SwitchFormAction(ActionEvent event) {
-        String buttonText = ((Button) event.getSource()).getText();
-        switch (buttonText) {
+        switch (((Button) event.getSource()).getText()) {
             case "Add Item" -> Switcher(1);
             case "Update Item" -> Switcher(2);
             case "Delete Item" -> Switcher(3);
@@ -85,16 +89,11 @@ public class DashboardController  implements Initializable {
     }
     private void Switcher(int toActivate) {
         ObservableList<String> shortAdd = add_btn.getStyleClass(), shortUpdate = update_btn.getStyleClass(), shortDelete = delete_btn.getStyleClass();
-//        shortAdd.remove("active");
-//        shortUpdate.remove("active");
-//        shortDelete.remove("active");
-//        shortAdd.remove("notActive");
-//        shortUpdate.remove("notActive");
-//        shortDelete.remove("notActive");
         shortAdd.clear();
         shortUpdate.clear();
         shortDelete.clear();
-        switch(toActivate) {
+        
+        switch (toActivate) {
             case 1:
                 shortAdd.add("active");
                 shortAdd.remove("notActive");
@@ -114,22 +113,35 @@ public class DashboardController  implements Initializable {
                 shortDelete.remove("notActive");
                 break;
         }
-        System.out.println(shortAdd);
-        System.out.println(shortUpdate);
-        System.out.println(shortDelete);
-        System.out.println();
     }
     @FXML
     private void Submit() {
-        if(add_btn.getStyleClass().contains("active"))
-            SQLUtils.AddItem(id_field.getText(), vehicleType_field.getText(), year_field.getText(), make_field.getText(), model_field.getText(), Double.parseDouble(price_field.getText()), Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
-        else if(update_btn.getStyleClass().contains("active"))
-            SQLUtils.UpdateItem(id_field.getText(), vehicleType_field.getText(), year_field.getText(), make_field.getText(), model_field.getText(), Double.parseDouble(price_field.getText()), Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
-        else if(delete_btn.getStyleClass().contains("active"))
-            SQLUtils.DeleteItem(id_field.getText());
-        
-        items = SQLUtils.RefreshTable();
-        table.setItems(items);
+        SQLUtils utils = new SQLUtils();
+        if (id_field.getText().isEmpty() || vehicleType_field.getText().isEmpty() || year_field.getText().isEmpty() ||
+                make_field.getText().isEmpty() || model_field.getText().isEmpty() || price_field.getText().isEmpty() ||
+                quantity_field.getText().isEmpty() || reorder_field.getText().isEmpty()) {
+            Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
+        } else {
+            if (add_btn.getStyleClass().contains("active"))
+                utils.AddItem(id_field.getText(), vehicleType_field.getText(), year_field.getText(),
+                        make_field.getText(), model_field.getText(), Double.parseDouble(price_field.getText()),
+                        Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
+            else if (update_btn.getStyleClass().contains("active"))
+                utils.UpdateItem(id_field.getText(), vehicleType_field.getText(), year_field.getText(),
+                        make_field.getText(), model_field.getText(), Double.parseDouble(price_field.getText()),
+                        Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
+            else if (delete_btn.getStyleClass().contains("active")) {
+                // make a yes or no alert box that will delete an item if yes or do nothing if no
+                // make utils not static anymore
+                // remove all static methods
+                Utils.ErrorAlert(Alert.AlertType.CONFIRMATION, "Form Validation", "Delete This Item", "Confirming, would you like to delete this piece of data?");
+                utils.DeleteItem(id_field.getText());
+            }
+            
+            items = utils.RefreshTable();
+            table.setItems(items);
+            ClearForm();
+        }
     }
     @FXML
     private void ClearForm() {
@@ -147,19 +159,24 @@ public class DashboardController  implements Initializable {
     private void LogOut() {
         Utils.ChangeScene("signup-login.fxml");
         welcomeText.getScene().getWindow().hide();
-//        new DashboardController().WelcomeName("This is a test");
-        WelcomeName("This is a test");
+//        WelcomeName("This is a test");
     }
     // region Window Settings
     @FXML
     private void Minimize(ActionEvent event) {
         Utils.Minimize(event);
     }
-    
     @FXML
     private void Close() {
         Utils.Close();
     }
-    
+    @FXML
+    private void Click(MouseEvent event) {
+        Utils.WindowClick(event);
+    }
+    @FXML
+    private void Drag(MouseEvent event) {
+        Utils.WindowDrag(event, dashboard);
+    }
     // endregion
 }

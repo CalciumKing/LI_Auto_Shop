@@ -7,59 +7,20 @@ import javafx.scene.control.Alert;
 import java.sql.*;
 
 public class SQLUtils {
-    // region Main Methods
     // region Login/Signup
-    public static void Login(String username, String password, String email) {
+    public void Login(String username, String password, String email) {
         String sql = "select * from users_table where username = ? and password = ? and email = ?;";
         RunFormSQL(sql, username, password, email, true);
     }
-    public static void Register(String username, String password, String email) {
+    public void Register(String username, String password, String email) {
         String sql = "insert into users_table (username, password, email) values (?, ?, ?);";
         RunFormSQL(sql, username, password, email, false);
     }
-    public static void ResetPassword(String username, String newPassword, String email) {
+    public void ResetPassword(String username, String newPassword, String email) {
         String sql = "update users_table set password=? where username=? and email=?;";
         RunFormSQL(sql, newPassword, username, email, false);
     }
-    // endregion
-    // region Table
-    public static void AddItem(String id, String vehicle_type, String year, String make, String model, double price, int quantity_in_stock, int reorder_level) {
-        String sql = "insert into items (id, vehicle_type, year, make, model, price, quantity_in_stock, reorder_level) values (?, ?, ?, ?, ?, ?, ?, ?);";
-        RunAutoSQL(sql, id, vehicle_type, year, make, model, price, quantity_in_stock, reorder_level);
-    }
-    public static void UpdateItem(String id, String vehicle_type, String year, String make, String model, double price, int quantity_in_stock, int reorder_level) {
-        String sql = "update items set id = ?, vehicle_type = ?, year = ?, make = ?, model = ?, price = ?, quantity_in_stock = ?, reorder_level = ? where id = ?;";
-        Connection connect = ConnectAutoDB();
-        if(connect == null)
-            return;
-        
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
-            PreparedStatement newPrepared = autoEight(prepared, id, vehicle_type, year, make, model, price, quantity_in_stock, reorder_level);
-            if(newPrepared == null)
-                return;
-            newPrepared.setString(9, id);
-            newPrepared.executeUpdate();
-        } catch (Exception ignored) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Inserting Information", "There was an error running the SQL information to add to the table.");
-        }
-    }
-    public static void DeleteItem(String id) {
-        String sql = "delete from items where id = ?;";
-        Connection connect = ConnectAutoDB();
-        if(connect == null)
-            return;
-        
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
-            prepared.setString(1, id);
-            prepared.executeUpdate();
-            System.out.println("done");
-        } catch (Exception ignored) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Deleting Information", "There was an error in the process of deleting information from the table.");
-        }
-    }
-    // endregion
-    // endregion
-    public static boolean ValidInfo(String username, String password, String email) {
+    public boolean ValidInfo(String username, String password, String email) {
         String sql = "select * from users_table where username = ? and password = ? and email = ?";
         Connection connect = ConnectDB();
         if (connect == null)
@@ -70,66 +31,97 @@ public class SQLUtils {
             prepared.setString(2, password);
             prepared.setString(3, email);
             ResultSet result = prepared.executeQuery();
-            System.out.println("working");
-            // FORM ALWAYS RESULTS IN WORKING, EVEN WHEN USER IS INVALID, DOES NOT ADD TO TABLE THO
+            System.out.println("prepared statements executed successfully");
             
-            if(result.next()) {
-                if(result.getString("username").equals(username) && result.getString("password").equals(password) && result.getString("email").equals(email)) {
-                    DashboardController.WelcomeName(result.getString("username"));
+            if (result.next()) {
+                if (result.getString("username").equals(username) && result.getString("password").equals(password) && result.getString("email").equals(email)) {
+                    System.out.println("passes test");
+//                    new DashboardController().WelcomeName(result.getString("username"));
                     return true;
                 }
-            } else {
-                System.out.println("not working 1");
-                return false;
             }
-        } catch (Exception ignored) {
+            return false;
+        } catch (Exception e) {
             Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
+            e.printStackTrace();
+            System.out.println("catch");
+            return false;
         }
-        System.out.println("not working 2");
-        return false;
     }
-    public static ObservableList<Item> RefreshTable() {
+    // endregion
+    // region Table
+    public void AddItem(String id, String vehicle_type, String year, String make, String model, double price, int quantity_in_stock, int reorder_level) {
+        String sql = "insert into items (id, vehicle_type, year, make, model, price, quantity_in_stock, reorder_level) values (?, ?, ?, ?, ?, ?, ?, ?);";
+        RunAutoSQL(sql, id, vehicle_type, year, make, model, price, quantity_in_stock, reorder_level);
+    }
+    public void UpdateItem(String id, String vehicle_type, String year, String make, String model, double price, int quantity_in_stock, int reorder_level) {
+        String sql = "update items set id = ?, vehicle_type = ?, year = ?, make = ?, model = ?, price = ?, quantity_in_stock = ?, reorder_level = ? where id = ?;";
+        Connection connect = ConnectAutoDB();
+        if (connect == null)
+            return;
+        
+        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+            PreparedStatement newPrepared = autoEight(prepared, id, vehicle_type, year, make, model, price, quantity_in_stock, reorder_level);
+            if (newPrepared == null)
+                return;
+            
+            newPrepared.setString(9, id);
+            newPrepared.executeUpdate();
+        } catch (Exception ignored) {
+            Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Inserting Information", "There was an error running the SQL information to add to the table.");
+        }
+    }
+    public void DeleteItem(String id) {
+        String sql = "delete from items where id = ?;";
+        Connection connect = ConnectAutoDB();
+        if (connect == null)
+            return;
+        
+        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+            prepared.setString(1, id);
+            prepared.executeUpdate();
+        } catch (Exception ignored) {
+            Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Deleting Information", "There was an error in the process of deleting information from the table.");
+        }
+    }
+    public ObservableList<Item> RefreshTable() {
         String sql = "select * from items";
         Connection connect = ConnectAutoDB();
-        if(connect == null)
+        if (connect == null)
             return null;
         
         try (PreparedStatement prepared = connect.prepareStatement(sql)) {
             ResultSet result = prepared.executeQuery();
             ObservableList<Item> data = FXCollections.observableArrayList();
-            while(result.next()) {
+            while (result.next()) {
                 Item thing = new Item(result.getString("id"), result.getString("vehicle_type"),
                         result.getString("year"), result.getString("make"), result.getString("model"),
                         result.getDouble("price"), result.getInt("quantity_in_stock"), result.getInt("reorder_level"));
                 data.add(thing);
-                System.out.println(thing.getId());
-                System.out.println(thing.getMake());
-                System.out.println(thing.getModel());
-                System.out.println(thing.getVehicle_type());
             }
             return data;
         } catch (Exception ignored) {
             Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Refreshing Table", "There was an error running the SQL information to refresh the table.");
+            return null;
         }
-        return null;
     }
-    
+    // endregion
     // region Utils
     private static Connection ConnectDB() {
         try {
             return DriverManager.getConnection("jdbc:mysql://localhost:3306/login_and_register", "root", "password");
         } catch (Exception ignored) {
             Utils.ErrorAlert(Alert.AlertType.ERROR, "Connection Error", "Error Connecting To Login Database", "Database could not be connected to, please try again.");
+            return null;
         }
-        return null;
     }
     private static Connection ConnectAutoDB() {
         try {
             return DriverManager.getConnection("jdbc:mysql://localhost:3306/auto_shop", "root", "password");
         } catch (Exception ignored) {
             Utils.ErrorAlert(Alert.AlertType.ERROR, "Connection Error", "Error Connecting To Auto Database", "Database could not be connected to, please try again.");
+            return null;
         }
-        return null;
     }
     private static void RunFormSQL(String sql, String username, String password, String email, boolean query) {
         Connection connect = ConnectDB();
@@ -154,11 +146,14 @@ public class SQLUtils {
                                    String year, String make, String model, double price,
                                    int quantity_in_stock, int reorder_level) {
         Connection connect = ConnectAutoDB();
-        if(connect == null)
+        if (connect == null)
             return;
         
         try (PreparedStatement prepared = connect.prepareStatement(sql)) {
             PreparedStatement newPrepared = autoEight(prepared, id, vehicle_type, year, make, model, price, quantity_in_stock, reorder_level);
+            if (newPrepared == null)
+                return;
+            
             newPrepared.executeUpdate();
         } catch (Exception ignored) {
             Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Inserting Information", "There was an error running the SQL information to add to the table.");
@@ -177,11 +172,10 @@ public class SQLUtils {
             prepared.setInt(7, quantity_in_stock);
             prepared.setInt(8, reorder_level);
             return prepared;
-        } catch(Exception ignored) {
+        } catch (Exception ignored) {
             Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Entering Auto Application Information", "There was an error entering the information in the Auto Eight class");
             return null;
         }
-        
     }
     // endregion
 }

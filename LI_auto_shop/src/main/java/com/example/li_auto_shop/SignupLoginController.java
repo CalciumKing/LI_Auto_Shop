@@ -4,12 +4,15 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 
 import java.util.regex.Pattern;
 
 public class SignupLoginController {
     // region Variables
+    @FXML
+    private AnchorPane page;
     @FXML
     private Label formText;
     @FXML
@@ -51,36 +54,30 @@ public class SignupLoginController {
         }
         ClearForm();
     }
-    
     @FXML
     private void FormSubmit() {
         if (ValidForm()) {
             try {
+                SQLUtils utils = new SQLUtils();
                 if (signup.getStyleClass().contains("active"))
-                    SQLUtils.Register(username.getText(), password.getText(), email.getText());
+                    utils.Register(username.getText(), password.getText(), email.getText());
                 else
-                    SQLUtils.Login(username.getText(), password.getText(), email.getText());
+                    utils.Login(username.getText(), password.getText(), email.getText());
             } catch (Exception ignored) {
                 Utils.ErrorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information from MainController", "There was an error retrieving the SQL information, or that user doesn't exist.");
             }
-//            User user = new User(username.getText(), password.getText(), email.getText());
+            User user = new User(username.getText(), password.getText(), email.getText());
             Utils.ChangeScene("dashboard.fxml");
-//            System.out.println(user.getUsername());
-//            DashboardController dashboardController = new DashboardController();
-//            DashboardController.WelcomeName(user.getUsername());
-            formText.getScene().getWindow().hide();
+//            new DashboardController().WelcomeName(user.getUsername());
+            page.getScene().getWindow().hide();
             ClearForm();
         }
     }
     @FXML
-    public String GetUsername() {
-        return username.getText();
-    }
-    
-    @FXML
     private void Forgot() {
         resetPasswordButton.setVisible(true);
         forgotPassword.setVisible(true);
+        forgotPassword.setVisible(false);
         formText.setText("Forgot Password");
         formButton.setVisible(false);
         password.setPromptText("Enter New Password:");
@@ -103,11 +100,10 @@ public class SignupLoginController {
             formText.setText("Login Form");
             shortLogin.remove("notActive");
             shortLogin.add("active");
-            SQLUtils.ResetPassword(username.getText(), password.getText(), email.getText());
+            new SQLUtils().ResetPassword(username.getText(), password.getText(), email.getText());
             ClearForm();
         }
     }
-    
     // endregion
     // region Form Utils
     private void ClearForm() {
@@ -137,33 +133,40 @@ public class SignupLoginController {
         if (username.getText().isEmpty() || email.getText().isEmpty() || password.getText().isEmpty() || (signup.getStyleClass().contains("active") && confirmPassword.getText().isEmpty())) {
             Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
             return false;
-        } else if (!Pattern.compile(emailRegex).matcher(email.getText()).matches()) {
-            Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Email", "Please Enter A Valid Email That Contains An '@' And A '.com'");
-            return false;
-        } else if (!Pattern.compile(passwordRegex).matcher(password.getText()).matches()) {
-            Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Password", "Please Enter A Valid Password That Contains At Least 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number, and 1 Special Character");
-            return false;
-        } else if (signup.getStyleClass().contains("active") && !password.getText().equals(confirmPassword.getText())) {
-            Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Passwords Must Match", "Password And Confirm Password Must Match");
-            return false;
-        } else if (!SQLUtils.ValidInfo(username.getText(), password.getText(), email.getText())) {
+        } else if (signup.getStyleClass().contains("active")) {
+            if (!Pattern.compile(emailRegex).matcher(email.getText()).matches()) {
+                Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Email", "Please Enter A Valid Email That Contains An '@' And A '.com'");
+                return false;
+            } else if (!Pattern.compile(passwordRegex).matcher(password.getText()).matches()) {
+                Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Password", "Please Enter A Valid Password That Contains At Least 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number, and 1 Special Character");
+                return false;
+            } else if (!password.getText().equals(confirmPassword.getText())) {
+                Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Passwords Must Match", "Password And Confirm Password Must Match");
+                return false;
+            }
+        } else if (login.getStyleClass().contains("active") && !new SQLUtils().ValidInfo(username.getText(), password.getText(), email.getText())) {
             Utils.ErrorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Does Not Exist", "Please enter valid information for a user that does already exist.");
             return false;
         }
         return true;
     }
-    
     // endregion
     // region Window Settings
     @FXML
     private void Minimize(ActionEvent event) {
         Utils.Minimize(event);
     }
-    
     @FXML
     private void Close() {
         Utils.Close();
     }
-    
+    @FXML
+    private void Click(MouseEvent event) {
+        Utils.WindowClick(event);
+    }
+    @FXML
+    private void Drag(MouseEvent event) {
+        Utils.WindowDrag(event, page);
+    }
     // endregion
 }

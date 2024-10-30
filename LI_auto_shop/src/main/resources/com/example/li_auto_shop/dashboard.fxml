@@ -11,8 +11,8 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: midnightblue;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.li_auto_shop.DashboardController">
-   <AnchorPane fx:id="welcomePage" layoutX="10.0" layoutY="10.0" prefHeight="400.0" prefWidth="411.0" visible="false">
+<AnchorPane fx:id="dashboard" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: midnightblue;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.li_auto_shop.DashboardController">
+   <AnchorPane fx:id="welcomePage" layoutX="10.0" layoutY="10.0" prefHeight="400.0" prefWidth="411.0">
       <Label fx:id="welcomeText" layoutX="113.0" layoutY="29.0" text="Welcome, NAME HERE" textFill="WHITE">
          <font>
             <Font name="System Bold" size="35.0" />
@@ -22,8 +22,8 @@
          <Image url="@../../../../../../../../../../../Downloads/OCLogo.png" />
       </ImageView>
    </AnchorPane>
-   <AnchorPane fx:id="databasePage" prefHeight="410.0" prefWidth="606.0">
-      <TableView fx:id="table" layoutX="124.0" layoutY="43.0" prefHeight="215.0" prefWidth="458.0">
+   <AnchorPane fx:id="databasePage" prefHeight="410.0" prefWidth="606.0" visible="false">
+      <TableView fx:id="table" layoutX="124.0" layoutY="43.0" onMouseClicked="#Selected" prefHeight="215.0" prefWidth="458.0">
          <columns>
             <TableColumn fx:id="id_col" prefWidth="33.333274841308594" text="ID" />
             <TableColumn fx:id="vehicle_type_col" prefWidth="87.33334350585938" text="Type" />
@@ -49,23 +49,13 @@
       <TextField fx:id="reorder_field" layoutX="359.0" layoutY="380.0" prefHeight="25.0" prefWidth="82.0" promptText="Reorder:" />
       <Button layoutX="519.0" layoutY="300.0" mnemonicParsing="false" onAction="#Submit" styleClass="notActive" text="Submit:" />
    </AnchorPane>
-   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="410.0" stroke="BLACK" strokeType="INSIDE" width="99.0" />
-   <Button layoutX="13.0" layoutY="85.0" mnemonicParsing="false" onAction="#WelcomePage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Welcome" textFill="WHITE">
+   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="410.0" layoutX="-6.0" stroke="BLACK" strokeType="INSIDE" width="105.0" />
+   <Button layoutX="13.0" layoutY="170.0" mnemonicParsing="false" onAction="#WelcomePage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Welcome" textFill="WHITE">
       <font>
          <Font name="System Bold" size="12.0" />
       </font>
    </Button>
-   <Button layoutX="13.0" layoutY="129.0" mnemonicParsing="false" onAction="#DatabasePage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Database" textFill="WHITE">
-      <font>
-         <Font name="System Bold" size="12.0" />
-      </font>
-   </Button>
-   <Button layoutX="13.0" layoutY="179.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Page 3" textFill="WHITE">
-      <font>
-         <Font name="System Bold" size="12.0" />
-      </font>
-   </Button>
-   <Button layoutX="13.0" layoutY="225.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Page 4" textFill="WHITE">
+   <Button layoutX="13.0" layoutY="214.0" mnemonicParsing="false" onAction="#DatabasePage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Database" textFill="WHITE">
       <font>
          <Font name="System Bold" size="12.0" />
       </font>
@@ -75,12 +65,13 @@
          <Font name="System Bold" size="12.0" />
       </font>
    </Button>
-   <Button layoutX="560.0" layoutY="1.0" mnemonicParsing="false" onAction="#Minimize" styleClass="min" text="-" textFill="#0d00c5">
+   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" layoutX="-3.0" onMouseClicked="#Click" onMouseDragged="#Drag" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="611.0" />
+   <Button layoutX="565.0" layoutY="1.0" mnemonicParsing="false" onAction="#Minimize" styleClass="min" text="-" textFill="#0d00c5">
       <font>
          <Font name="System Bold" size="12.0" />
       </font>
    </Button>
-   <Button layoutX="582.0" layoutY="1.0" mnemonicParsing="false" onAction="#Close" styleClass="close" text="X" textFill="#0d00c5">
+   <Button layoutX="587.0" layoutY="1.0" mnemonicParsing="false" onAction="#Close" styleClass="close" text="X" textFill="#0d00c5">
       <font>
          <Font name="System Bold" size="12.0" />
       </font>
