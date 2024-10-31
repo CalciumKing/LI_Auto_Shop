@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 public class SignupLoginController {
     // region Variables
+    private static final Utils utils = new Utils();
     @FXML
     private AnchorPane page;
     @FXML
@@ -64,10 +65,10 @@ public class SignupLoginController {
                 else
                     utils.Login(username.getText(), password.getText(), email.getText());
             } catch (Exception ignored) {
-                Utils.ErrorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information from MainController", "There was an error retrieving the SQL information, or that user doesn't exist.");
+                utils.ErrorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information from MainController", "There was an error retrieving the SQL information, or that user doesn't exist.");
             }
             User user = new User(username.getText(), password.getText(), email.getText());
-            Utils.ChangeScene("dashboard.fxml");
+            utils.ChangeScene("dashboard.fxml");
 //            new DashboardController().WelcomeName(user.getUsername());
             page.getScene().getWindow().hide();
             ClearForm();
@@ -131,21 +132,21 @@ public class SignupLoginController {
         String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[/~`!@#$%^&*()_+{};:',<.>? =]).{8,}$";
         
         if (username.getText().isEmpty() || email.getText().isEmpty() || password.getText().isEmpty() || (signup.getStyleClass().contains("active") && confirmPassword.getText().isEmpty())) {
-            Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
+            utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
             return false;
         } else if (signup.getStyleClass().contains("active")) {
             if (!Pattern.compile(emailRegex).matcher(email.getText()).matches()) {
-                Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Email", "Please Enter A Valid Email That Contains An '@' And A '.com'");
+                utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Email", "Please Enter A Valid Email That Contains An '@' And A '.com'");
                 return false;
             } else if (!Pattern.compile(passwordRegex).matcher(password.getText()).matches()) {
-                Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Password", "Please Enter A Valid Password That Contains At Least 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number, and 1 Special Character");
+                utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Password", "Please Enter A Valid Password That Contains At Least 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number, and 1 Special Character");
                 return false;
             } else if (!password.getText().equals(confirmPassword.getText())) {
-                Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Passwords Must Match", "Password And Confirm Password Must Match");
+                utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Passwords Must Match", "Password And Confirm Password Must Match");
                 return false;
             }
         } else if (login.getStyleClass().contains("active") && !new SQLUtils().ValidInfo(username.getText(), password.getText(), email.getText())) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Does Not Exist", "Please enter valid information for a user that does already exist.");
+            utils.ErrorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Does Not Exist", "Please enter valid information for a user that does already exist.");
             return false;
         }
         return true;
@@ -154,19 +155,19 @@ public class SignupLoginController {
     // region Window Settings
     @FXML
     private void Minimize(ActionEvent event) {
-        Utils.Minimize(event);
+        utils.Minimize(event);
     }
     @FXML
     private void Close() {
-        Utils.Close();
+        utils.Close();
     }
     @FXML
     private void Click(MouseEvent event) {
-        Utils.WindowClick(event);
+        utils.WindowClick(event);
     }
     @FXML
     private void Drag(MouseEvent event) {
-        Utils.WindowDrag(event, page);
+        utils.WindowDrag(event, page);
     }
     // endregion
 }

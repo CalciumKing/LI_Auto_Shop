@@ -116,29 +116,31 @@ public class DashboardController implements Initializable {
     }
     @FXML
     private void Submit() {
-        SQLUtils utils = new SQLUtils();
+        SQLUtils sqlUtils = new SQLUtils();
+        Utils utils = new Utils();
+        
         if (id_field.getText().isEmpty() || vehicleType_field.getText().isEmpty() || year_field.getText().isEmpty() ||
                 make_field.getText().isEmpty() || model_field.getText().isEmpty() || price_field.getText().isEmpty() ||
                 quantity_field.getText().isEmpty() || reorder_field.getText().isEmpty()) {
-            Utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
+            utils.ErrorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
         } else {
             if (add_btn.getStyleClass().contains("active"))
-                utils.AddItem(id_field.getText(), vehicleType_field.getText(), year_field.getText(),
+                sqlUtils.AddItem(id_field.getText(), vehicleType_field.getText(), year_field.getText(),
                         make_field.getText(), model_field.getText(), Double.parseDouble(price_field.getText()),
                         Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
             else if (update_btn.getStyleClass().contains("active"))
-                utils.UpdateItem(id_field.getText(), vehicleType_field.getText(), year_field.getText(),
+                sqlUtils.UpdateItem(id_field.getText(), vehicleType_field.getText(), year_field.getText(),
                         make_field.getText(), model_field.getText(), Double.parseDouble(price_field.getText()),
                         Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
             else if (delete_btn.getStyleClass().contains("active")) {
                 // make a yes or no alert box that will delete an item if yes or do nothing if no
                 // make utils not static anymore
                 // remove all static methods
-                Utils.ErrorAlert(Alert.AlertType.CONFIRMATION, "Form Validation", "Delete This Item", "Confirming, would you like to delete this piece of data?");
-                utils.DeleteItem(id_field.getText());
+                utils.ErrorAlert(Alert.AlertType.CONFIRMATION, "Form Validation", "Delete This Item", "Confirming, would you like to delete this piece of data?");
+                sqlUtils.DeleteItem(id_field.getText());
             }
             
-            items = utils.RefreshTable();
+            items = sqlUtils.RefreshTable();
             table.setItems(items);
             ClearForm();
         }
@@ -157,26 +159,26 @@ public class DashboardController implements Initializable {
     // endregion
     @FXML
     private void LogOut() {
-        Utils.ChangeScene("signup-login.fxml");
+        utils.ChangeScene("signup-login.fxml");
         welcomeText.getScene().getWindow().hide();
 //        WelcomeName("This is a test");
     }
     // region Window Settings
     @FXML
     private void Minimize(ActionEvent event) {
-        Utils.Minimize(event);
+        utils.Minimize(event);
     }
     @FXML
     private void Close() {
-        Utils.Close();
+        utils.Close();
     }
     @FXML
     private void Click(MouseEvent event) {
-        Utils.WindowClick(event);
+        utils.WindowClick(event);
     }
     @FXML
     private void Drag(MouseEvent event) {
-        Utils.WindowDrag(event, dashboard);
+        utils.WindowDrag(event, dashboard);
     }
     // endregion
 }

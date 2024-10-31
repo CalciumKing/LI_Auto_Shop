@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import java.sql.*;
 
 public class SQLUtils {
+    private static final Utils utils = new Utils();
     // region Login/Signup
     public void Login(String username, String password, String email) {
         String sql = "select * from users_table where username = ? and password = ? and email = ?;";
@@ -41,9 +42,8 @@ public class SQLUtils {
                 }
             }
             return false;
-        } catch (Exception e) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
-            e.printStackTrace();
+        } catch (Exception ignored) {
+            utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
             System.out.println("catch");
             return false;
         }
@@ -68,7 +68,7 @@ public class SQLUtils {
             newPrepared.setString(9, id);
             newPrepared.executeUpdate();
         } catch (Exception ignored) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Inserting Information", "There was an error running the SQL information to add to the table.");
+            utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Inserting Information", "There was an error running the SQL information to add to the table.");
         }
     }
     public void DeleteItem(String id) {
@@ -81,7 +81,7 @@ public class SQLUtils {
             prepared.setString(1, id);
             prepared.executeUpdate();
         } catch (Exception ignored) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Deleting Information", "There was an error in the process of deleting information from the table.");
+            utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Deleting Information", "There was an error in the process of deleting information from the table.");
         }
     }
     public ObservableList<Item> RefreshTable() {
@@ -101,7 +101,7 @@ public class SQLUtils {
             }
             return data;
         } catch (Exception ignored) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Refreshing Table", "There was an error running the SQL information to refresh the table.");
+            utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Refreshing Table", "There was an error running the SQL information to refresh the table.");
             return null;
         }
     }
@@ -111,7 +111,7 @@ public class SQLUtils {
         try {
             return DriverManager.getConnection("jdbc:mysql://localhost:3306/login_and_register", "root", "password");
         } catch (Exception ignored) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Connection Error", "Error Connecting To Login Database", "Database could not be connected to, please try again.");
+            utils.ErrorAlert(Alert.AlertType.ERROR, "Connection Error", "Error Connecting To Login Database", "Database could not be connected to, please try again.");
             return null;
         }
     }
@@ -119,7 +119,7 @@ public class SQLUtils {
         try {
             return DriverManager.getConnection("jdbc:mysql://localhost:3306/auto_shop", "root", "password");
         } catch (Exception ignored) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Connection Error", "Error Connecting To Auto Database", "Database could not be connected to, please try again.");
+            utils.ErrorAlert(Alert.AlertType.ERROR, "Connection Error", "Error Connecting To Auto Database", "Database could not be connected to, please try again.");
             return null;
         }
     }
@@ -137,9 +137,9 @@ public class SQLUtils {
             else
                 prepared.executeUpdate();
         } catch (SQLException ignored) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information, from RunFormSQL", "There was an error retrieving the SQL information.");
+            utils.ErrorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information, from RunFormSQL", "There was an error retrieving the SQL information.");
         } catch (Exception ignored) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
+            utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
         }
     }
     private static void RunAutoSQL(String sql, String id, String vehicle_type,
@@ -156,7 +156,7 @@ public class SQLUtils {
             
             newPrepared.executeUpdate();
         } catch (Exception ignored) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Inserting Information", "There was an error running the SQL information to add to the table.");
+            utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Inserting Information", "There was an error running the SQL information to add to the table.");
         }
     }
     private static PreparedStatement autoEight(PreparedStatement prepared, String id, String vehicle_type,
@@ -173,7 +173,7 @@ public class SQLUtils {
             prepared.setInt(8, reorder_level);
             return prepared;
         } catch (Exception ignored) {
-            Utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Entering Auto Application Information", "There was an error entering the information in the Auto Eight class");
+            utils.ErrorAlert(Alert.AlertType.ERROR, "Error", "Error Entering Auto Application Information", "There was an error entering the information in the Auto Eight class");
             return null;
         }
     }
