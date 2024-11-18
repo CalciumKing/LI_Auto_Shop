@@ -17,7 +17,7 @@
         <Font name="System Bold" size="12.0" />
       </font>
     </Label>
-    <Button id="loginButton" fx:id="login" layoutX="252.0" layoutY="106.0" mnemonicParsing="false" onAction="#ChangeForm" text="Login" textFill="WHITE">
+    <Button id="loginButton" fx:id="login" layoutX="252.0" layoutY="106.0" mnemonicParsing="false" onAction="#changeForm" text="Login" textFill="WHITE">
       <font>
         <Font name="System Bold" size="12.0" />
       </font>
@@ -26,7 +26,7 @@
             <String fx:value="button" />
          </styleClass>
     </Button>
-    <Button id="signupButton" fx:id="signup" layoutX="300.0" layoutY="106.0" mnemonicParsing="false" onAction="#ChangeForm" styleClass="notActive" text="Signup">
+    <Button id="signupButton" fx:id="signup" layoutX="300.0" layoutY="106.0" mnemonicParsing="false" onAction="#changeForm" styleClass="notActive" text="Signup">
       <font>
         <Font name="System Bold" size="12.0" />
       </font>
@@ -34,30 +34,30 @@
     <TextField fx:id="email" layoutX="225.0" layoutY="146.0" promptText="Email Address:" style="-fx-background-radius: 8px;" />
     <TextField fx:id="username" layoutX="225.0" layoutY="179.0" promptText="Username:" style="-fx-background-radius: 8px;" />
     <PasswordField fx:id="password" layoutX="225.0" layoutY="211.0" promptText="Password:" style="-fx-background-radius: 8px;" />
-    <Button fx:id="forgotPassword" layoutX="244.0" layoutY="243.0" mnemonicParsing="false" onAction="#Forgot" style="-fx-background-radius: 8px;" styleClass="notActive" text="Forgot Password">
+    <Button fx:id="forgotPassword" layoutX="244.0" layoutY="243.0" mnemonicParsing="false" onAction="#forgotPassword" style="-fx-background-radius: 8px;" styleClass="notActive" text="Forgot Password">
       <font>
         <Font name="System Bold" size="12.0" />
       </font>
     </Button>
-    <Button fx:id="formButton" layoutX="225.0" layoutY="278.0" mnemonicParsing="false" onAction="#FormSubmit" prefHeight="25.0" prefWidth="149.0" style="-fx-background-color: midnightblue;" text="Login" textFill="WHITE">
+    <Button fx:id="formButton" layoutX="225.0" layoutY="278.0" mnemonicParsing="false" onAction="#formSubmit" prefHeight="25.0" prefWidth="149.0" style="-fx-background-color: midnightblue;" text="Login" textFill="WHITE">
       <font>
         <Font name="System Bold" size="12.0" />
       </font>
     </Button>
-    <Button fx:id="resetPasswordButton" layoutX="225.0" layoutY="278.0" mnemonicParsing="false" onAction="#ResetPassword" prefHeight="25.0" prefWidth="149.0" style="-fx-background-color: midnightblue;" text="Reset Password" textFill="WHITE" visible="false">
+    <Button fx:id="resetPasswordButton" layoutX="225.0" layoutY="278.0" mnemonicParsing="false" onAction="#resetPassword" prefHeight="25.0" prefWidth="149.0" style="-fx-background-color: midnightblue;" text="Reset Password" textFill="WHITE" visible="false">
       <font>
         <Font name="System Bold" size="12.0" />
       </font>
     </Button>
     <PasswordField fx:id="confirmPassword" layoutX="225.0" layoutY="243.0" promptText="Confirm Password:" style="-fx-background-radius: 8px;" visible="false" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" layoutX="-1.0" onMouseClicked="#Click" onMouseDragged="#Drag" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="600.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" layoutX="-1.0" onMouseClicked="#windowClick" onMouseDragged="#windowDrag" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="600.0" />
   </AnchorPane>
-  <Button layoutX="552.0" layoutY="1.0" mnemonicParsing="false" onAction="#Minimize" styleClass="min" text="-" textFill="#0d00c5">
+  <Button layoutX="552.0" layoutY="1.0" mnemonicParsing="false" onAction="#windowMinimize" styleClass="min" text="-" textFill="#0d00c5">
     <font>
       <Font name="System Bold" size="12.0" />
     </font>
   </Button>
-  <Button layoutX="574.0" layoutY="1.0" mnemonicParsing="false" onAction="#Close" styleClass="close" text="X" textFill="#0d00c5">
+  <Button layoutX="574.0" layoutY="1.0" mnemonicParsing="false" onAction="#windowClose" styleClass="close" text="X" textFill="#0d00c5">
     <font>
       <Font name="System Bold" size="12.0" />
     </font>
