@@ -21,10 +21,10 @@
       <ImageView fitHeight="195.0" fitWidth="149.0" layoutX="424.0" layoutY="152.0" pickOnBounds="true" preserveRatio="true">
          <Image url="@../../../../../../../../../../../Downloads/OCLogo.png" />
       </ImageView>
-      <ImageView fx:id="imageView" fitHeight="195.0" fitWidth="318.0" layoutX="100.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true" visible="false" />
-      <Button layoutX="158.0" layoutY="340.0" mnemonicParsing="false" onAction="#sendToDB" text="add" visible="false" />
-      <Button layoutX="282.0" layoutY="340.0" mnemonicParsing="false" onAction="#pullFromDB" text="pull" visible="false" />
-      <Button layoutX="95.0" layoutY="340.0" mnemonicParsing="false" onAction="#importImage" text="import" visible="false" />
+      <ImageView fx:id="imageView" disable="true" fitHeight="195.0" fitWidth="318.0" layoutX="100.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true" visible="false" />
+      <Button disable="true" layoutX="158.0" layoutY="340.0" mnemonicParsing="false" onAction="#sendToDB" text="add" visible="false" />
+      <Button disable="true" layoutX="282.0" layoutY="340.0" mnemonicParsing="false" onAction="#pullFromDB" text="pull" visible="false" />
+      <Button disable="true" layoutX="95.0" layoutY="340.0" mnemonicParsing="false" onAction="#importImage" text="import" visible="false" />
    </AnchorPane>
    <AnchorPane fx:id="databasePage" prefHeight="410.0" prefWidth="606.0" visible="false">
       <TableView fx:id="table" layoutX="124.0" layoutY="43.0" onMouseClicked="#selected" prefHeight="215.0" prefWidth="458.0">
