@@ -7,7 +7,6 @@ import javafx.scene.control.Alert;
 import java.sql.*;
 
 public class SQLUtils {
-    private static final Utils utils = new Utils();
     // region Login/Signup
     public void login(String username, String password, String email) {
         String sql = "select * from users_table where username = ? and password = ? and email = ?;";
@@ -22,7 +21,7 @@ public class SQLUtils {
         runFormSQL(sql, newPassword, username, email, false);
     }
     public boolean validInfo(String username, String password, String email) {
-        String sql = "select * from users_table where username = ? and password = ? and email = ?";
+        String sql = "select * from users_table where username = ? and password = ? and email = ?;";
         Connection connect = connectDB();
         if (connect == null)
             return false;
@@ -43,7 +42,7 @@ public class SQLUtils {
             }
             return false;
         } catch (Exception ignored) {
-            utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
             System.out.println("catch");
             return false;
         }
@@ -55,7 +54,7 @@ public class SQLUtils {
         runAutoSQL(sql, id, brand, model, price, on_hand, reorder_level);
     }
     public void updateItem(String id, String brand, String model, double price, int on_hand, int reorder_level) {
-        String sql = "update items set id = ?, brand = ?, model_number = ?, price = ?, on_hand = ?, reorder_level = ? where (id = ?);";
+        String sql = "update items set id = ?, brand = ?, model_number = ?, price = ?, on_hand = ?, reorder_level = ? where id = ?;";
         Connection connect = connectDB();
         if (connect == null)
             return;
@@ -67,7 +66,7 @@ public class SQLUtils {
             newPrepared.setString(7, id);
             newPrepared.executeUpdate();
         } catch (Exception ignored) {
-            utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Inserting Information", "There was an error running the SQL information to add to the table.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Inserting Information", "There was an error running the SQL information to add to the table.");
         }
     }
     public void deleteItem(String id) {
@@ -80,7 +79,7 @@ public class SQLUtils {
             prepared.setString(1, id);
             prepared.executeUpdate();
         } catch (Exception ignored) {
-            utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Deleting Information", "There was an error in the process of deleting information from the table.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Deleting Information", "There was an error in the process of deleting information from the table.");
         }
     }
     public ObservableList<Item> refreshTable() {
@@ -94,15 +93,36 @@ public class SQLUtils {
             ObservableList<Item> data = FXCollections.observableArrayList();
             while (result.next()) {
                 Item thing = new Item(result.getString("id"), result.getString("brand"),
-                        result.getString("model"), result.getDouble("price"),
+                        result.getString("model_number"), result.getDouble("price"),
                         result.getInt("on_hand"), result.getInt("reorder_level"));
                 data.add(thing);
             }
             return data;
         } catch (Exception ignored) {
-            utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Refreshing Table", "There was an error running the SQL information to refresh the table.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Refreshing Table", "There was an error running the SQL information to refresh the table.");
             return null;
         }
+    }
+    // endregion
+    // region Scanner Table
+    public String getImage(String id) {
+        Connection connection = connectDB();
+        if (connection == null)
+            return null;
+        
+        String sql = "select image from items where id = ? limit 1;";
+        try (PreparedStatement prepared = connection.prepareStatement(sql)){
+            prepared.setString(1, id);
+            ResultSet result = prepared.executeQuery();
+            if (result.next())
+                return result.getString(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public Item getItem() {
+        return null;
     }
     // endregion
     // region Utils
@@ -110,7 +130,7 @@ public class SQLUtils {
         try {
             return DriverManager.getConnection("jdbc:mysql://localhost:3306/auto_shop", "root", "password");
         } catch (Exception ignored) {
-            utils.errorAlert(Alert.AlertType.ERROR, "Connection Error", "Error Connecting To Auto Database", "Database could not be connected to, please try again.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Connection Error", "Error Connecting To Auto Database", "Database could not be connected to, please try again.");
             return null;
         }
     }
@@ -128,9 +148,9 @@ public class SQLUtils {
             else
                 prepared.executeUpdate();
         } catch (SQLException ignored) {
-            utils.errorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information, from RunFormSQL", "There was an error retrieving the SQL information.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information, from RunFormSQL", "There was an error retrieving the SQL information.");
         } catch (Exception ignored) {
-            utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
         }
     }
     private static void runAutoSQL(String sql, String id, String brand,
@@ -146,12 +166,11 @@ public class SQLUtils {
                 return;
             newPrepared.executeUpdate();
         } catch (Exception ignored) {
-            utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error In runAutoSQL", "There was an error running the SQL information to add to the table.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error In runAutoSQL", "There was an error running the SQL information to add to the table.");
         }
     }
     private static PreparedStatement itemPrepared(PreparedStatement prepared, String id, String brand,
-                                               String model, double price,
-                                               int on_hand, int reorder_level) {
+                                               String model, double price, int on_hand, int reorder_level) {
         try {
             prepared.setString(1, id);
             prepared.setString(2, brand);
@@ -161,7 +180,7 @@ public class SQLUtils {
             prepared.setInt(6, reorder_level);
             return prepared;
         } catch (Exception ignored) {
-            utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Entering Auto Application Information", "There was an error entering the information in the Auto Eight class");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Entering Auto Application Information", "There was an error entering the information in the Auto Eight class");
             return null;
         }
     }
