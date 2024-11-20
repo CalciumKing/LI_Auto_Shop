@@ -5,8 +5,8 @@
     -fx-cursor: open_hand;
 }
 
-.close, .min {
-    -fx-background-color: WHITESMOKE;
+.close, .min, .notActive {
+    -fx-background-color: whitesmoke;
 }
 .close:hover {
     -fx-background-color: red;
@@ -18,10 +18,9 @@
 .active {
     -fx-background-color: midnightblue;
     -fx-text-fill: white;
-    -fx-border-color:  WHITESMOKE;
+    -fx-border-color:  whitesmoke;
 }
 .notActive {
-    -fx-background-color: WHITESMOKE;
     -fx-text-fill: black;
 }
 .active, .notActive {

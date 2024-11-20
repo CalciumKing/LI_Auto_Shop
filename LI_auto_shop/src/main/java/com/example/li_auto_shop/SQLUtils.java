@@ -94,7 +94,7 @@ public class SQLUtils {
             while (result.next()) {
                 Item thing = new Item(result.getString("id"), result.getString("brand"),
                         result.getString("model_number"), result.getDouble("price"),
-                        result.getInt("on_hand"), result.getInt("reorder_level"));
+                        result.getInt("on_hand"), result.getInt("reorder_level"), null);
                 data.add(thing);
             }
             return data;
@@ -105,23 +105,45 @@ public class SQLUtils {
     }
     // endregion
     // region Scanner Table
-    public String getImage(String id) {
+//    public String getImage(String id) {
+//        Connection connection = connectDB();
+//        if (connection == null)
+//            return null;
+//
+//        String sql = "select image from items where id = ? limit 1;";
+//        try (PreparedStatement prepared = connection.prepareStatement(sql)){
+//            prepared.setString(1, id);
+//            ResultSet result = prepared.executeQuery();
+//            if (result.next())
+//                return result.getString(0);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
+    public Item getItem(String id) {
         Connection connection = connectDB();
         if (connection == null)
             return null;
         
-        String sql = "select image from items where id = ? limit 1;";
+        String sql = "select * from items where id = ? limit 1;";
         try (PreparedStatement prepared = connection.prepareStatement(sql)){
             prepared.setString(1, id);
             ResultSet result = prepared.executeQuery();
             if (result.next())
-                return result.getString(0);
+                return new Item(
+                        result.getString(1),
+                        result.getString(2),
+                        result.getString(3),
+                        result.getDouble(4),
+                        result.getInt(5),
+                        result.getInt(6),
+                        result.getString(7)
+                );
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Error in getItem");
         }
-        return null;
-    }
-    public Item getItem() {
         return null;
     }
     // endregion

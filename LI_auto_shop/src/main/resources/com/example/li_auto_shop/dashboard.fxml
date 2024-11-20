@@ -57,8 +57,11 @@
             <TableColumn fx:id="scanner_quantity_col" prefWidth="75.0" text="Quantity" />
          </columns>
       </TableView>
-      <TextField fx:id="scanner_id_field" layoutX="157.0" layoutY="302.0" promptText="Scan Item Or Input ID:" />
-      <Spinner fx:id="spinner" layoutX="409.0" layoutY="302.0" />
+      <TextField fx:id="scanner_id_field" layoutX="157.0" layoutY="302.0" onKeyTyped="#loadItem" promptText="Scan Item Or Input ID:" />
+      <Spinner fx:id="spinner" layoutX="157.0" layoutY="343.0" />
+      <Button layoutX="371.0" layoutY="302.0" mnemonicParsing="false" styleClass="notActive" text="Clear" />
+      <Button layoutX="428.0" layoutY="302.0" mnemonicParsing="false" styleClass="notActive" text="Submit Item" />
+      <Button layoutX="373.0" layoutY="343.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="139.0" styleClass="notActive" text="Finalize Changes" />
    </AnchorPane>
    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="410.0" layoutX="-6.0" stroke="BLACK" strokeType="INSIDE" width="105.0" />
    <Button layoutX="13.0" layoutY="170.0" mnemonicParsing="false" onAction="#welcomePage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Welcome" textFill="WHITE">

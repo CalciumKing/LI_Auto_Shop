@@ -26,11 +26,8 @@ import java.util.ResourceBundle;
 
 public class DashboardController implements Initializable {
     // region Variables
-    private Image image;
     @FXML
     private ImageView imageView;
-    @FXML
-    private String imageFolderPath = System.getProperty("user.dir") + "\\bin\\Images";
     @FXML
     private Label welcomeText;
     @FXML
@@ -41,7 +38,7 @@ public class DashboardController implements Initializable {
     @FXML
     private TextField id_field, brand_field, model_field, price_field, quantity_field, reorder_field, scanner_id_field;
     @FXML
-    private Spinner<Integer> spinner = new Spinner<>(-99, 99, 1);
+    private Spinner<Integer> spinner;
     @FXML
     private TableView<Item> table, scanner_table;
     @FXML
@@ -69,6 +66,8 @@ public class DashboardController implements Initializable {
         scanner_id_col.setCellValueFactory(new PropertyValueFactory<>("id"));
         scanner_quantity_col.setCellValueFactory(new PropertyValueFactory<>("on_hand"));
         scanner_price_col.setCellValueFactory(new PropertyValueFactory<>("price"));
+        SpinnerValueFactory<Integer> qtySpinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(-99, 99, 1);
+        spinner.setValueFactory(qtySpinner);
         clearScannerForm();
     }
     // endregion
@@ -174,20 +173,6 @@ public class DashboardController implements Initializable {
         }
     }
     @FXML
-    private void loadItem() {
-        String path = new SQLUtils().getImage(scanner_id_field.getText());
-        if(path == null)
-            System.out.println("No image available");
-        else {
-            File imageDir = new File(imageFolderPath);
-            System.out.println(imageDir + path);
-            File imageFile = new File(imageDir, path);
-            image = new Image(imageFile.toURI().toString(), 125, 165, true, true);
-            imageView.setImage(image);
-        }
-        Item item = new SQLUtils().getItem();
-    }
-    @FXML
     private void clearForm() {
         id_field.clear();
         brand_field.clear();
@@ -196,11 +181,44 @@ public class DashboardController implements Initializable {
         quantity_field.clear();
         reorder_field.clear();
     }
+    // endregion
+    // region Scanner Form
+    @FXML
+    private void loadItem() {
+        if(scanner_id_field.getText().isEmpty()) {
+            clearScannerForm();
+            return;
+        }
+        
+        Item item = new SQLUtils().getItem(scanner_id_field.getText());
+        if(item == null) {
+            Utils.createImage(null, imageView);
+            spinner.getValueFactory().setValue(0);
+            return;
+        }
+        
+        String path = item.getPath();
+        Utils.createImage(path, imageView);
+        spinner.getValueFactory().setValue(1);
+    }
     private void clearScannerForm() {
         scanner_id_field.clear();
-//        SpinnerValueFactory<Integer> qtySpinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(-99, 99, 1);
-//        spinner.setValueFactory(qtySpinner);
+        Utils.createImage("SeanRiley.jpg", imageView);
         spinner.getValueFactory().setValue(0);
+    }
+    @FXML
+    private void selectedScanner() {
+        Item item = scanner_table.getSelectionModel().getSelectedItem();
+        if(item == null)
+            return;
+        
+        scanner_id_field.setText(item.getId());
+        scanner_quantity_col.setText(String.valueOf(item.getOn_hand()));
+//        brand_field.setText(item.getBrand());
+//        model_field.setText(item.getModel());
+//        price_field.setText(String.valueOf(item.getPrice()));
+//        quantity_field.setText(String.valueOf(item.getOn_hand()));
+//        reorder_field.setText(String.valueOf(item.getReorder_level()));
     }
     // endregion
     @FXML
