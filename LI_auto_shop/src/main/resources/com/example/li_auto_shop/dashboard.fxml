@@ -50,17 +50,17 @@
       <ImageView fx:id="imageView" disable="true" fitHeight="195.0" fitWidth="243.0" layoutX="110.0" layoutY="72.0" pickOnBounds="true">
          <Image url="@../../../../../../bin/Images/SeanRiley.jpg" />
       </ImageView>
-      <TableView fx:id="scanner_table" layoutX="371.0" layoutY="69.0" prefHeight="200.0" prefWidth="226.0">
+      <TableView fx:id="scanner_table" layoutX="371.0" layoutY="69.0" onMouseClicked="#selectedScanner" prefHeight="200.0" prefWidth="226.0">
          <columns>
             <TableColumn fx:id="scanner_id_col" prefWidth="75.0" text="ID" />
-            <TableColumn fx:id="scanner_price_col" prefWidth="75.0" text="Price" />
             <TableColumn fx:id="scanner_quantity_col" prefWidth="75.0" text="Quantity" />
+            <TableColumn fx:id="scanner_price_col" prefWidth="75.0" text="Price" />
          </columns>
       </TableView>
       <TextField fx:id="scanner_id_field" layoutX="157.0" layoutY="302.0" onKeyTyped="#loadItem" promptText="Scan Item Or Input ID:" />
       <Spinner fx:id="spinner" layoutX="157.0" layoutY="343.0" />
-      <Button layoutX="371.0" layoutY="302.0" mnemonicParsing="false" styleClass="notActive" text="Clear" />
-      <Button layoutX="428.0" layoutY="302.0" mnemonicParsing="false" styleClass="notActive" text="Submit Item" />
+      <Button layoutX="371.0" layoutY="302.0" mnemonicParsing="false" onAction="#clearScannerForm" styleClass="notActive" text="Clear" />
+      <Button layoutX="428.0" layoutY="302.0" mnemonicParsing="false" onAction="#SubmitScanner" styleClass="notActive" text="Submit Item" />
       <Button layoutX="373.0" layoutY="343.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="139.0" styleClass="notActive" text="Finalize Changes" />
    </AnchorPane>
    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="410.0" layoutX="-6.0" stroke="BLACK" strokeType="INSIDE" width="105.0" />

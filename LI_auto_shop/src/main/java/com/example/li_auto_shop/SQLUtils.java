@@ -92,10 +92,10 @@ public class SQLUtils {
             ResultSet result = prepared.executeQuery();
             ObservableList<Item> data = FXCollections.observableArrayList();
             while (result.next()) {
-                Item thing = new Item(result.getString("id"), result.getString("brand"),
+                Item item = new Item(result.getString("id"), result.getString("brand"),
                         result.getString("model_number"), result.getDouble("price"),
-                        result.getInt("on_hand"), result.getInt("reorder_level"), null);
-                data.add(thing);
+                        result.getInt("on_hand"), result.getInt("reorder_level"), result.getString("image"));
+                data.add(item);
             }
             return data;
         } catch (Exception ignored) {

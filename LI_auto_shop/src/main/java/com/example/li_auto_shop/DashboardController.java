@@ -1,5 +1,6 @@
 package com.example.li_auto_shop;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -150,9 +151,9 @@ public class DashboardController implements Initializable {
         SQLUtils sqlUtils = new SQLUtils();
         
         if (id_field.getText().isEmpty() || brand_field.getText().isEmpty() || model_field.getText().isEmpty() ||
-                price_field.getText().isEmpty() || quantity_field.getText().isEmpty() || reorder_field.getText().isEmpty()) {
+                price_field.getText().isEmpty() || quantity_field.getText().isEmpty() || reorder_field.getText().isEmpty())
             Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
-        } else {
+        else {
             if (add_btn.getStyleClass().contains("active"))
                 sqlUtils.addItem(id_field.getText(), brand_field.getText(),
                         model_field.getText(), Double.parseDouble(price_field.getText()),
@@ -197,14 +198,52 @@ public class DashboardController implements Initializable {
             return;
         }
         
-        String path = item.getPath();
-        Utils.createImage(path, imageView);
+        Utils.createImage(item.getPath(), imageView);
         spinner.getValueFactory().setValue(1);
     }
+    @FXML
     private void clearScannerForm() {
         scanner_id_field.clear();
         Utils.createImage("SeanRiley.jpg", imageView);
         spinner.getValueFactory().setValue(0);
+    }
+    @FXML
+    private void SubmitScanner() {
+        SQLUtils sqlUtils = new SQLUtils();
+        if (scanner_id_field.getText().isEmpty() || spinner.getValue() == 0)
+            Utils.errorAlert(Alert.AlertType.INFORMATION, "Adjustment Validation", "Invalid Fields", "All Fields Must Be Filled In And Have A Non-Zero Value");
+        else {
+            Item databaseItem = sqlUtils.getItem(scanner_id_field.getText());
+            if(databaseItem == null) {
+                Utils.errorAlert(Alert.AlertType.ERROR, "Form Error", "Item Does Not Exist", "Make Sure ID Is Valid And Belongs To An Already Existing Item");
+                return;
+            }
+            
+            scannerItems = scanner_table.getItems();
+            Item selectedItem = null;
+            for(Item tableItem : scannerItems) {
+                if (tableItem.getId().equals(databaseItem.getId())) {
+                    selectedItem = tableItem;
+                    break;
+                }
+            }
+            
+            if (selectedItem != null) {
+                int newQuantity = selectedItem.getOn_hand() + spinner.getValue();
+                selectedItem.setOn_hand(newQuantity);
+                selectedItem.setPrice(databaseItem.getPrice() * newQuantity);
+                if(selectedItem.getOn_hand() == 0)
+                    scannerItems.remove(selectedItem);
+                scanner_table.refresh();
+            } else {
+                ObservableList<Item> data = FXCollections.observableArrayList();
+                data.add(new Item(databaseItem.getId(), databaseItem.getBrand(), databaseItem.getModel(),
+                        databaseItem.getPrice() * spinner.getValue(),
+                        spinner.getValue(), databaseItem.getReorder_level(), databaseItem.getPath()));
+                scanner_table.setItems(data);
+            }
+            clearScannerForm();
+        }
     }
     @FXML
     private void selectedScanner() {
@@ -212,13 +251,9 @@ public class DashboardController implements Initializable {
         if(item == null)
             return;
         
+        Utils.createImage(item.getPath(), imageView);
         scanner_id_field.setText(item.getId());
-        scanner_quantity_col.setText(String.valueOf(item.getOn_hand()));
-//        brand_field.setText(item.getBrand());
-//        model_field.setText(item.getModel());
-//        price_field.setText(String.valueOf(item.getPrice()));
-//        quantity_field.setText(String.valueOf(item.getOn_hand()));
-//        reorder_field.setText(String.valueOf(item.getReorder_level()));
+        spinner.getValueFactory().setValue(1);
     }
     // endregion
     @FXML
