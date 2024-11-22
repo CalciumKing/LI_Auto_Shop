@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -13,17 +15,29 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.File;
+import java.util.Optional;
 
 public class Utils {
     private static double xOffset;
     private static double yOffset;
     private static final String imageFolderPath = System.getProperty("user.dir") + "\\bin\\Images";
     public static void errorAlert(Alert.AlertType type, String title, String headerText, String contentText) {
+        Alert alert = createAlert(type, title, headerText, contentText);
+        alert.showAndWait();
+    }
+    public static Optional<ButtonType> confirmAlert(Alert.AlertType type, String title, String headerText, String contentText) {
+        Alert alert = createAlert(type, title, headerText, contentText);
+        ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+        ButtonType no = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(yes, no);
+        return alert.showAndWait();
+    }
+    public static Alert createAlert(Alert.AlertType type, String title, String headerText, String contentText) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
-        alert.showAndWait();
+        return alert;
     }
     public static void changeScene(String sceneName) {
         try {
@@ -41,8 +55,7 @@ public class Utils {
     }
     public static void createImage(String path, ImageView imageView) {
         File imageDir = new File(imageFolderPath);
-        File imageFile;
-        imageFile = new File(imageDir, ((path == null) ? "fileNotFound.png" : path));
+        File imageFile = new File(imageDir, ((path == null) ? "NoImage.jpg" : path));
         Image image = new Image(imageFile.toURI().toString(), 125, 165, true, true);
         if (image.isError())
             System.out.println("Error loading image: " + image.getException().getMessage());

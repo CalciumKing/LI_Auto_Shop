@@ -1,29 +1,22 @@
 package com.example.li_auto_shop;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 // To Do:
 // make a yes or no alert box that will delete an item if yes or do nothing if no
-// make utils not static anymore
-// remove all static methods
+// make file chooser with mr riley code
 // put submit/login/create user function under enter key pressed in password section
-// make one single sql table instead of two
-// restructure database and sql code for new requirements
-// make sure everything is camelCase and not PascalCase
 
 public class DashboardController implements Initializable {
     // region Variables
@@ -59,7 +52,6 @@ public class DashboardController implements Initializable {
         price_col.setCellValueFactory(new PropertyValueFactory<>("price"));
         on_hand_col.setCellValueFactory(new PropertyValueFactory<>("on_hand"));
         reorder_level_col.setCellValueFactory(new PropertyValueFactory<>("reorder_level"));
-        
         clearForm();
         items = new SQLUtils().refreshTable();
         table.setItems(items);
@@ -148,30 +140,31 @@ public class DashboardController implements Initializable {
     }
     @FXML
     private void submit() {
-        SQLUtils sqlUtils = new SQLUtils();
-        
         if (id_field.getText().isEmpty() || brand_field.getText().isEmpty() || model_field.getText().isEmpty() ||
-                price_field.getText().isEmpty() || quantity_field.getText().isEmpty() || reorder_field.getText().isEmpty())
+                price_field.getText().isEmpty() || quantity_field.getText().isEmpty() || reorder_field.getText().isEmpty()) {
             Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
-        else {
-            if (add_btn.getStyleClass().contains("active"))
-                sqlUtils.addItem(id_field.getText(), brand_field.getText(),
-                        model_field.getText(), Double.parseDouble(price_field.getText()),
-                        Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
-            else if (update_btn.getStyleClass().contains("active"))
-                sqlUtils.updateItem(id_field.getText(), brand_field.getText(),
-                        model_field.getText(), Double.parseDouble(price_field.getText()),
-                        Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
-            else if (delete_btn.getStyleClass().contains("active")) {
-                
-                Utils.errorAlert(Alert.AlertType.CONFIRMATION, "Form Validation", "Delete This Item", "Confirming, would you like to delete this piece of data?");
-                sqlUtils.deleteItem(id_field.getText());
-            }
-            
-            items = sqlUtils.refreshTable();
-            table.setItems(items);
-            clearForm();
+            return;
         }
+        
+        SQLUtils sqlUtils = new SQLUtils();
+        if (add_btn.getStyleClass().contains("active"))
+            sqlUtils.addItem(id_field.getText(), brand_field.getText(),
+                    model_field.getText(), Double.parseDouble(price_field.getText()),
+                    Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
+        else if (update_btn.getStyleClass().contains("active"))
+            sqlUtils.updateItem(id_field.getText(), brand_field.getText(),
+                    model_field.getText(), Double.parseDouble(price_field.getText()),
+                    Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
+        else if (delete_btn.getStyleClass().contains("active")) {
+//                ask mr riley for the rest of the code:
+//                Optional<ButtonType> optionSelected = Utils.confirmAlert(Alert.AlertType.CONFIRMATION, "Form Validation", "Delete This Item", "Confirming, would you like to delete this piece of data?");
+//                if(optionSelected.isPresent() && optionSelected.get().getText())
+                sqlUtils.deleteItem(id_field.getText());
+        }
+        
+        items = sqlUtils.refreshTable();
+        table.setItems(items);
+        clearForm();
     }
     @FXML
     private void clearForm() {
@@ -193,7 +186,7 @@ public class DashboardController implements Initializable {
         
         Item item = new SQLUtils().getItem(scanner_id_field.getText());
         if(item == null) {
-            Utils.createImage(null, imageView);
+            Utils.createImage("fileNotFound.png", imageView);
             spinner.getValueFactory().setValue(0);
             return;
         }
@@ -204,46 +197,49 @@ public class DashboardController implements Initializable {
     @FXML
     private void clearScannerForm() {
         scanner_id_field.clear();
-        Utils.createImage("SeanRiley.jpg", imageView);
+        Utils.createImage("defaultImage.jpg", imageView);
         spinner.getValueFactory().setValue(0);
     }
     @FXML
-    private void SubmitScanner() {
+    private void submitScanner() {
         SQLUtils sqlUtils = new SQLUtils();
-        if (scanner_id_field.getText().isEmpty() || spinner.getValue() == 0)
+        if (scanner_id_field.getText().isEmpty() || spinner.getValue() == 0) {
             Utils.errorAlert(Alert.AlertType.INFORMATION, "Adjustment Validation", "Invalid Fields", "All Fields Must Be Filled In And Have A Non-Zero Value");
-        else {
-            Item databaseItem = sqlUtils.getItem(scanner_id_field.getText());
-            if(databaseItem == null) {
-                Utils.errorAlert(Alert.AlertType.ERROR, "Form Error", "Item Does Not Exist", "Make Sure ID Is Valid And Belongs To An Already Existing Item");
+            return;
+        }
+        
+        Item databaseItem = sqlUtils.getItem(scanner_id_field.getText());
+        if(databaseItem == null) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Form Error", "Item Does Not Exist", "Make Sure ID Is Valid And Belongs To An Already Existing Item");
+            return;
+        }
+        
+        scannerItems = scanner_table.getItems();
+        Item selectedItem = null;
+        for(Item tableItem : scannerItems) {
+            if (tableItem.getId().equals(databaseItem.getId())) {
+                selectedItem = tableItem;
+                break;
+            }
+        }
+        
+        if (selectedItem != null) {
+            int newQuantity = selectedItem.getOn_hand() + spinner.getValue();
+            if(newQuantity == 0) {
+                scannerItems.remove(selectedItem);
+                clearScannerForm();
                 return;
             }
-            
-            scannerItems = scanner_table.getItems();
-            Item selectedItem = null;
-            for(Item tableItem : scannerItems) {
-                if (tableItem.getId().equals(databaseItem.getId())) {
-                    selectedItem = tableItem;
-                    break;
-                }
-            }
-            
-            if (selectedItem != null) {
-                int newQuantity = selectedItem.getOn_hand() + spinner.getValue();
-                selectedItem.setOn_hand(newQuantity);
-                selectedItem.setPrice(databaseItem.getPrice() * newQuantity);
-                if(selectedItem.getOn_hand() == 0)
-                    scannerItems.remove(selectedItem);
-                scanner_table.refresh();
-            } else {
-                ObservableList<Item> data = FXCollections.observableArrayList();
-                data.add(new Item(databaseItem.getId(), databaseItem.getBrand(), databaseItem.getModel(),
-                        databaseItem.getPrice() * spinner.getValue(),
-                        spinner.getValue(), databaseItem.getReorder_level(), databaseItem.getPath()));
-                scanner_table.setItems(data);
-            }
-            clearScannerForm();
+            selectedItem.setOn_hand(newQuantity);
+            selectedItem.setPrice(databaseItem.getPrice() * newQuantity);
+            scanner_table.refresh();
+        } else {
+            scannerItems.add(new Item(databaseItem.getId(), databaseItem.getBrand(), databaseItem.getModel(),
+                    databaseItem.getPrice() * spinner.getValue(),
+                    spinner.getValue(), databaseItem.getReorder_level(), databaseItem.getPath()));
+            scanner_table.setItems(scannerItems);
         }
+        clearScannerForm();
     }
     @FXML
     private void selectedScanner() {

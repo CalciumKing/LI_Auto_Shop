@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="dashboard" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: midnightblue;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.li_auto_shop.DashboardController">
-   <AnchorPane fx:id="welcomePage" layoutX="10.0" layoutY="10.0" prefHeight="400.0" prefWidth="411.0" visible="false">
+   <AnchorPane fx:id="welcomePage" layoutX="10.0" layoutY="10.0" prefHeight="400.0" prefWidth="411.0">
       <Label fx:id="welcomeText" layoutX="113.0" layoutY="29.0" text="Welcome, NAME HERE" textFill="WHITE">
          <font>
             <Font name="System Bold" size="35.0" />
@@ -45,8 +45,9 @@
       <TextField fx:id="reorder_field" layoutX="359.0" layoutY="346.0" prefHeight="25.0" prefWidth="82.0" promptText="Reorder:" />
       <Button layoutX="507.0" layoutY="300.0" mnemonicParsing="false" onAction="#submit" prefHeight="29.0" prefWidth="78.0" styleClass="notActive" text="Submit:" />
       <Button layoutX="510.0" layoutY="338.0" mnemonicParsing="false" onAction="#clearForm" styleClass="notActive" text="Clear Form" />
+      <Button layoutX="265.0" layoutY="378.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="178.0" styleClass="notActive" text="Select Image File" visible="false" />
    </AnchorPane>
-   <AnchorPane fx:id="scannerPage" prefHeight="410.0" prefWidth="611.0">
+   <AnchorPane fx:id="scannerPage" prefHeight="410.0" prefWidth="611.0" visible="false">
       <ImageView fx:id="imageView" disable="true" fitHeight="195.0" fitWidth="243.0" layoutX="110.0" layoutY="72.0" pickOnBounds="true">
          <Image url="@../../../../../../bin/Images/SeanRiley.jpg" />
       </ImageView>
@@ -60,7 +61,7 @@
       <TextField fx:id="scanner_id_field" layoutX="157.0" layoutY="302.0" onKeyTyped="#loadItem" promptText="Scan Item Or Input ID:" />
       <Spinner fx:id="spinner" layoutX="157.0" layoutY="343.0" />
       <Button layoutX="371.0" layoutY="302.0" mnemonicParsing="false" onAction="#clearScannerForm" styleClass="notActive" text="Clear" />
-      <Button layoutX="428.0" layoutY="302.0" mnemonicParsing="false" onAction="#SubmitScanner" styleClass="notActive" text="Submit Item" />
+      <Button layoutX="428.0" layoutY="302.0" mnemonicParsing="false" onAction="#submitScanner" styleClass="notActive" text="Submit Item" />
       <Button layoutX="373.0" layoutY="343.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="139.0" styleClass="notActive" text="Finalize Changes" />
    </AnchorPane>
    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="410.0" layoutX="-6.0" stroke="BLACK" strokeType="INSIDE" width="105.0" />
