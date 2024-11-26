@@ -11,15 +11,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
-
-// To Do:
-// make a yes or no alert box that will delete an item if yes or do nothing if no
-// make file chooser with mr riley code
-// put submit/login/create user function under enter key pressed in password section
 
 public class DashboardController implements Initializable {
     // region Variables
+    private int option = 0;
     @FXML
     private ImageView imageView;
     @FXML
@@ -52,8 +49,9 @@ public class DashboardController implements Initializable {
         price_col.setCellValueFactory(new PropertyValueFactory<>("price"));
         on_hand_col.setCellValueFactory(new PropertyValueFactory<>("on_hand"));
         reorder_level_col.setCellValueFactory(new PropertyValueFactory<>("reorder_level"));
+        
         clearForm();
-        items = new SQLUtils().refreshTable();
+        items = SQLUtils.refreshTable();
         table.setItems(items);
         
         scanner_id_col.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -65,6 +63,7 @@ public class DashboardController implements Initializable {
     }
     // endregion
     // endregion
+    
     // region Side NavBar
     @FXML
     private void welcomePage() {
@@ -72,27 +71,32 @@ public class DashboardController implements Initializable {
         databasePage.setVisible(false);
         scannerPage.setVisible(false);
     }
+    
     @FXML
     private void databasePage() {
         welcomePage.setVisible(false);
         databasePage.setVisible(true);
         scannerPage.setVisible(false);
     }
+    
     @FXML
     private void scannerPage() {
         welcomePage.setVisible(false);
         databasePage.setVisible(false);
         scannerPage.setVisible(true);
     }
+    
     // endregion
-//    public void welcomeName(String name) {
-//        welcomeText.setText("Welcome, " + name);
-//    }
+    
+    public void welcomeName(String name) {
+        welcomeText.setText("Welcome, " + name);
+    }
+    
     // region Form
     @FXML
     private void selected() {
         Item item = table.getSelectionModel().getSelectedItem();
-        if(item == null)
+        if (item == null)
             return;
         
         id_field.setText(item.getId());
@@ -102,6 +106,7 @@ public class DashboardController implements Initializable {
         quantity_field.setText(String.valueOf(item.getOn_hand()));
         reorder_field.setText(String.valueOf(item.getReorder_level()));
     }
+    
     @FXML
     private void switchFormAction(ActionEvent event) {
         switch (((Button) event.getSource()).getText()) {
@@ -109,10 +114,13 @@ public class DashboardController implements Initializable {
             case "Update Item" -> switcher(2);
             case "Delete Item" -> switcher(3);
         }
+        
         clearForm();
     }
+    
     private void switcher(int toActivate) {
         ObservableList<String> shortAdd = add_btn.getStyleClass(), shortUpdate = update_btn.getStyleClass(), shortDelete = delete_btn.getStyleClass();
+        
         shortAdd.clear();
         shortUpdate.clear();
         shortDelete.clear();
@@ -123,49 +131,63 @@ public class DashboardController implements Initializable {
                 shortAdd.remove("notActive");
                 shortUpdate.add("notActive");
                 shortDelete.add("notActive");
+                option = 0;
+                
                 break;
             case 2:
                 shortAdd.add("notActive");
                 shortUpdate.add("active");
                 shortUpdate.remove("notActive");
                 shortDelete.add("notActive");
+                option = 1;
                 break;
             case 3:
                 shortAdd.add("notActive");
                 shortUpdate.add("notActive");
                 shortDelete.add("active");
                 shortDelete.remove("notActive");
+                option = 2;
                 break;
         }
     }
+    
     @FXML
     private void submit() {
-        if (id_field.getText().isEmpty() || brand_field.getText().isEmpty() || model_field.getText().isEmpty() ||
-                price_field.getText().isEmpty() || quantity_field.getText().isEmpty() || reorder_field.getText().isEmpty()) {
-            Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
+        if (!isFormValid())
             return;
+        
+        String id = id_field.getText();
+        String brand = brand_field.getText();
+        String model = model_field.getText();
+        double price = Double.parseDouble(price_field.getText());
+        int quantity = Integer.parseInt(quantity_field.getText());
+        int reorder = Integer.parseInt(reorder_field.getText());
+        
+        // option is 0 for add item, 1 for modify item, and 2 for delete item
+        switch (option) {
+            case 0 -> SQLUtils.addItem(id, brand, model, price, quantity, reorder);
+            case 1 -> SQLUtils.updateItem(id, brand, model, price, quantity, reorder);
+            case 2 -> {
+                Optional<ButtonType> optionSelected = Utils.confirmAlert(Alert.AlertType.CONFIRMATION, "Form Validation", "Delete This Item", "Confirming, would you like to delete this piece of data?");
+                if (optionSelected.isPresent() && optionSelected.get().getText().equals("Yes"))
+                    SQLUtils.deleteItem(id_field.getText());
+            }
         }
         
-        SQLUtils sqlUtils = new SQLUtils();
-        if (add_btn.getStyleClass().contains("active"))
-            sqlUtils.addItem(id_field.getText(), brand_field.getText(),
-                    model_field.getText(), Double.parseDouble(price_field.getText()),
-                    Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
-        else if (update_btn.getStyleClass().contains("active"))
-            sqlUtils.updateItem(id_field.getText(), brand_field.getText(),
-                    model_field.getText(), Double.parseDouble(price_field.getText()),
-                    Integer.parseInt(quantity_field.getText()), Integer.parseInt(reorder_field.getText()));
-        else if (delete_btn.getStyleClass().contains("active")) {
-//                ask mr riley for the rest of the code:
-//                Optional<ButtonType> optionSelected = Utils.confirmAlert(Alert.AlertType.CONFIRMATION, "Form Validation", "Delete This Item", "Confirming, would you like to delete this piece of data?");
-//                if(optionSelected.isPresent() && optionSelected.get().getText())
-                sqlUtils.deleteItem(id_field.getText());
-        }
-        
-        items = sqlUtils.refreshTable();
+        items = SQLUtils.refreshTable();
         table.setItems(items);
         clearForm();
     }
+    
+    private boolean isFormValid() {
+        if (id_field.getText().isEmpty() || brand_field.getText().isEmpty() || model_field.getText().isEmpty() ||
+                price_field.getText().isEmpty() || quantity_field.getText().isEmpty() || reorder_field.getText().isEmpty()) {
+            Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
+            return false;
+        }
+        return true;
+    }
+    
     @FXML
     private void clearForm() {
         id_field.clear();
@@ -176,16 +198,17 @@ public class DashboardController implements Initializable {
         reorder_field.clear();
     }
     // endregion
+    
     // region Scanner Form
     @FXML
     private void loadItem() {
-        if(scanner_id_field.getText().isEmpty()) {
+        if (scanner_id_field.getText().isEmpty()) {
             clearScannerForm();
             return;
         }
         
-        Item item = new SQLUtils().getItem(scanner_id_field.getText());
-        if(item == null) {
+        Item item = SQLUtils.getItem(scanner_id_field.getText());
+        if (item == null) {
             Utils.createImage("fileNotFound.png", imageView);
             spinner.getValueFactory().setValue(0);
             return;
@@ -194,29 +217,30 @@ public class DashboardController implements Initializable {
         Utils.createImage(item.getPath(), imageView);
         spinner.getValueFactory().setValue(1);
     }
+    
     @FXML
     private void clearScannerForm() {
         scanner_id_field.clear();
         Utils.createImage("defaultImage.jpg", imageView);
         spinner.getValueFactory().setValue(0);
     }
+    
     @FXML
     private void submitScanner() {
-        SQLUtils sqlUtils = new SQLUtils();
         if (scanner_id_field.getText().isEmpty() || spinner.getValue() == 0) {
             Utils.errorAlert(Alert.AlertType.INFORMATION, "Adjustment Validation", "Invalid Fields", "All Fields Must Be Filled In And Have A Non-Zero Value");
             return;
         }
         
-        Item databaseItem = sqlUtils.getItem(scanner_id_field.getText());
-        if(databaseItem == null) {
+        Item databaseItem = SQLUtils.getItem(scanner_id_field.getText());
+        if (databaseItem == null) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Form Error", "Item Does Not Exist", "Make Sure ID Is Valid And Belongs To An Already Existing Item");
             return;
         }
         
         scannerItems = scanner_table.getItems();
         Item selectedItem = null;
-        for(Item tableItem : scannerItems) {
+        for (Item tableItem : scannerItems) {
             if (tableItem.getId().equals(databaseItem.getId())) {
                 selectedItem = tableItem;
                 break;
@@ -225,7 +249,7 @@ public class DashboardController implements Initializable {
         
         if (selectedItem != null) {
             int newQuantity = selectedItem.getOn_hand() + spinner.getValue();
-            if(newQuantity == 0) {
+            if (newQuantity == 0) {
                 scannerItems.remove(selectedItem);
                 clearScannerForm();
                 return;
@@ -239,12 +263,38 @@ public class DashboardController implements Initializable {
                     spinner.getValue(), databaseItem.getReorder_level(), databaseItem.getPath()));
             scanner_table.setItems(scannerItems);
         }
+        
         clearScannerForm();
     }
+    
+    @FXML
+    private void finalizeScannerForm() {
+        for (Item scannerItem : scannerItems) {
+            if (scannerItem == null)
+                continue;
+            
+            String id = scannerItem.getId();
+            Item sqlItem = SQLUtils.getItem(id);
+            String brand = scannerItem.getBrand();
+            String model = scannerItem.getModel();
+            double price = sqlItem.getPrice();
+            int quantity = sqlItem.getOn_hand() + scannerItem.getOn_hand();
+            int reorder = scannerItem.getReorder_level();
+            
+            SQLUtils.updateItem(id, brand, model, price, quantity, reorder);
+        }
+        
+        clearScannerForm();
+        scannerItems.clear();
+        scanner_table.setItems(scannerItems);
+        items = SQLUtils.refreshTable();
+        table.setItems(items);
+    }
+    
     @FXML
     private void selectedScanner() {
         Item item = scanner_table.getSelectionModel().getSelectedItem();
-        if(item == null)
+        if (item == null)
             return;
         
         Utils.createImage(item.getPath(), imageView);
@@ -252,24 +302,29 @@ public class DashboardController implements Initializable {
         spinner.getValueFactory().setValue(1);
     }
     // endregion
+    
     @FXML
     private void logOut() {
-        Utils.changeScene("signup-login.fxml");
+        Utils.changeScene("signup-login.fxml", null);
         welcomeText.getScene().getWindow().hide();
     }
+    
     // region Window Settings
     @FXML
     private void Minimize(ActionEvent event) {
         Utils.windowMinimize(event);
     }
+    
     @FXML
     private void Close() {
         Utils.windowClose();
     }
+    
     @FXML
     private void Click(MouseEvent event) {
         Utils.windowClick(event);
     }
+    
     @FXML
     private void Drag(MouseEvent event) {
         Utils.windowDrag(event, dashboard);

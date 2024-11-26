@@ -21,10 +21,13 @@ public class Utils {
     private static double xOffset;
     private static double yOffset;
     private static final String imageFolderPath = System.getProperty("user.dir") + "\\bin\\Images";
+    
+    // region Alert Methods
     public static void errorAlert(Alert.AlertType type, String title, String headerText, String contentText) {
         Alert alert = createAlert(type, title, headerText, contentText);
         alert.showAndWait();
     }
+    
     public static Optional<ButtonType> confirmAlert(Alert.AlertType type, String title, String headerText, String contentText) {
         Alert alert = createAlert(type, title, headerText, contentText);
         ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
@@ -32,47 +35,62 @@ public class Utils {
         alert.getButtonTypes().setAll(yes, no);
         return alert.showAndWait();
     }
-    public static Alert createAlert(Alert.AlertType type, String title, String headerText, String contentText) {
+    
+    private static Alert createAlert(Alert.AlertType type, String title, String headerText, String contentText) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
         return alert;
     }
-    public static void changeScene(String sceneName) {
+    // endregion Alert Methods
+    
+    public static void changeScene(String sceneName, User user) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName));
-//            DashboardController dashboardController = fxmlLoader.getController();
-//            dashboardController.WelcomeName("Landen");
+            
+            // vvv this code always throws an error vvv
+//            if (user != null) {
+//                DashboardController dashboardController = fxmlLoader.getController();
+//                dashboardController.welcomeName(user.getUsername());
+//            }
+            
             Stage stage = new Stage();
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setTitle("Automotive Application");
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.show();
+            
         } catch (Exception ignored) {
             errorAlert(Alert.AlertType.ERROR, "Scene Error", "Error Changing Scene", "There was an error changing scenes, please try again");
         }
     }
+    
     public static void createImage(String path, ImageView imageView) {
         File imageDir = new File(imageFolderPath);
         File imageFile = new File(imageDir, ((path == null) ? "NoImage.jpg" : path));
         Image image = new Image(imageFile.toURI().toString(), 125, 165, true, true);
+        
         if (image.isError())
             System.out.println("Error loading image: " + image.getException().getMessage());
         else
             imageView.setImage(image);
     }
+    
     // region Window Settings
     public static void windowMinimize(ActionEvent event) {
         ((Stage) ((Button) event.getSource()).getScene().getWindow()).setIconified(true);
     }
+    
     public static void windowClose() {
         System.exit(0);
     }
+    
     public static void windowClick(MouseEvent event) {
         xOffset = event.getScreenX();
         yOffset = event.getScreenY();
     }
+    
     public static void windowDrag(MouseEvent event, AnchorPane pane) {
         Stage stage = (Stage) pane.getScene().getWindow();
         stage.setX(event.getScreenX() - xOffset);
