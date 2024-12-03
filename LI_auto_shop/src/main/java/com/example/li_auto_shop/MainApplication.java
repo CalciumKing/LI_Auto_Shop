@@ -11,7 +11,7 @@ import java.io.IOException;
 public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("signup-login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("dashboard.fxml"));
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("Automotive Application");
         stage.setScene(new Scene(fxmlLoader.load()));

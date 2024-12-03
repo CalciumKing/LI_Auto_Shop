@@ -64,7 +64,7 @@ public class SQLUtils {
             prepared.setInt(6, reorder_level);
             prepared.executeUpdate();
         } catch (Exception ignored) {
-            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error In runAutoSQL", "There was an error running the SQL information to add to the table.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error In addItem", "There was an error running the SQL information to add to the table.");
         }
     }
     
@@ -84,7 +84,7 @@ public class SQLUtils {
             prepared.setString(7, id);
             prepared.executeUpdate();
         } catch (Exception ignored) {
-            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Inserting Information", "There was an error running the SQL information to add to the table.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error In updateItem", "There was an error running the SQL information to update the table.");
         }
     }
     
@@ -98,7 +98,7 @@ public class SQLUtils {
             prepared.setString(1, id);
             prepared.executeUpdate();
         } catch (Exception ignored) {
-            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Deleting Information", "There was an error in the process of deleting information from the table.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error in deleteItem", "There was an error deleting information from the table.");
         }
     }
     
@@ -112,12 +112,15 @@ public class SQLUtils {
             ResultSet result = prepared.executeQuery();
             ObservableList<Item> data = FXCollections.observableArrayList();
             
-            while (result.next()) {
-                Item item = new Item(result.getString("id"), result.getString("brand"),
-                        result.getString("model_number"), result.getDouble("price"),
-                        result.getInt("on_hand"), result.getInt("reorder_level"), result.getString("image"));
-                data.add(item);
-            }
+            while (result.next())
+                data.add(new Item(
+                        result.getString("id"),
+                        result.getString("brand"),
+                        result.getString("model_number"),
+                        result.getDouble("price"),
+                        result.getInt("on_hand"),
+                        result.getInt("reorder_level"),
+                        result.getString("image")));
             return data;
             
         } catch (Exception ignored) {
@@ -154,6 +157,80 @@ public class SQLUtils {
     }
     // endregion
     
+    // region User Table
+    public static void addUser(String username, String email, String password, int grade) {
+        Connection connect = connectDB();
+        if (connect == null) return;
+        
+        String sql = "insert into users_table (username, password, email, grade) values (?, ?, ?, ?);";
+        
+        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+            prepared.setString(1, username);
+            prepared.setString(2, email);
+            prepared.setString(3, password);
+            prepared.setInt(5, grade);
+            prepared.executeUpdate();
+        } catch (Exception ignored) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error In addUser", "There was an error running the SQL information to add a user to the table.");
+        }
+    }
+    
+    public static void updateUser(String username, String email, String password, int grade) {
+        Connection connect = connectDB();
+        if (connect == null) return;
+        
+        String sql = "update items set username = ?, email = ?, password = ?, grade = ? where username = ?;";
+        
+        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+            prepared.setString(1, username);
+            prepared.setString(2, email);
+            prepared.setString(3, password);
+            prepared.setInt(4, grade);
+            prepared.setString(5, username);
+            prepared.executeUpdate();
+        } catch (Exception ignored) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error in updateUser", "There was an error running the SQL information to update a user in the table.");
+        }
+    }
+    
+    public static void deleteUser(String username) {
+        Connection connect = connectDB();
+        if (connect == null) return;
+        
+        String sql = "delete from users_table where username = ?;";
+        
+        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+            prepared.setString(1, username);
+            prepared.executeUpdate();
+        } catch (Exception ignored) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error in deleteUser", "There was an error deleting information from the user table.");
+        }
+    }
+    public static ObservableList<User> refreshUserTable() {
+        Connection connect = connectDB();
+        if (connect == null) return null;
+        
+        String sql = "select * from users_table;";
+        
+        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+            ResultSet result = prepared.executeQuery();
+            ObservableList<User> data = FXCollections.observableArrayList();
+            
+            while (result.next())
+                data.add(new User(
+                        result.getString("username"),
+                        result.getString("password"),
+                        result.getString("email"),
+                        result.getInt("grade")));
+            return data;
+            
+        } catch (Exception ignored) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Refreshing Table", "There was an error running the SQL information to refresh the user table.");
+            return null;
+        }
+    }
+    // endregion
+    
     // region Utils
     private static Connection connectDB() {
         try {
@@ -176,7 +253,7 @@ public class SQLUtils {
             
             if (query) {
                 prepared.executeQuery();
-                return new User(username, password, email);
+                return new User(username, password, email, -1);
             } else {
                 prepared.executeUpdate();
                 return null;

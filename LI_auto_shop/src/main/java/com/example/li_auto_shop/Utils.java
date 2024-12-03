@@ -2,6 +2,7 @@ package com.example.li_auto_shop;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -48,17 +49,17 @@ public class Utils {
     public static void changeScene(String sceneName, User user) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName));
+            Parent root = fxmlLoader.load();
             
-            // vvv this code always throws an error vvv
-//            if (user != null) {
-//                DashboardController dashboardController = fxmlLoader.getController();
-//                dashboardController.welcomeName(user.getUsername());
-//            }
+            if (user != null) {
+                DashboardController dashboardController = fxmlLoader.getController();
+                dashboardController.welcomeName(user.getUsername());
+            }
             
             Stage stage = new Stage();
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setTitle("Automotive Application");
-            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.setScene(new Scene(root));
             stage.show();
             
         } catch (Exception ignored) {
