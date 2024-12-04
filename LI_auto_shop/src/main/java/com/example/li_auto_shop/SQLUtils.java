@@ -9,13 +9,13 @@ import java.sql.*;
 public class SQLUtils {
     // region Login/Signup
     public static User login(String username, String password, String email) {
-        String sql = "select * from users_table where username = ? and password = ? and email = ?;";
+        String sql = "select * from users_table where username = ? and password = ? and email = ? limit 1;";
         return runFormSQL(sql, username, password, email, true);
     }
     
-    public static void register(String username, String password, String email) {
+    public static User register(String username, String password, String email) {
         String sql = "insert into users_table (username, password, email) values (?, ?, ?);";
-        runFormSQL(sql, username, password, email, false);
+        return runFormSQL(sql, username, password, email, false);
     }
     
     public static void resetPassword(String username, String newPassword, String email) {
@@ -23,26 +23,18 @@ public class SQLUtils {
         runFormSQL(sql, newPassword, username, email, false);
     }
     
-    public static boolean validInfo(String username, String password, String email) {
+    public static boolean userExists(String username) {
         Connection connect = connectDB();
         if (connect == null) return false;
         
-        String sql = "select * from users_table where username = ? and password = ? and email = ?;";
+        String sql = "select * from users_table where username = ?;";
         
         try (PreparedStatement prepared = connect.prepareStatement(sql)) {
             prepared.setString(1, username);
-            prepared.setString(2, password);
-            prepared.setString(3, email);
             ResultSet result = prepared.executeQuery();
-            
-            if (result.next())
-                return result.getString("username").equals(username) &&
-                        result.getString("password").equals(password) &&
-                        result.getString("email").equals(email);
-            return false;
+            return result.next();
         } catch (Exception ignored) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
-            System.out.println("catch");
             return false;
         }
     }
@@ -153,6 +145,7 @@ public class SQLUtils {
         } catch (Exception ignored) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Get Item Error", "Error Getting Item From Database", "There was an error getting an item from the database, please try again.");
         }
+        
         return null;
     }
     // endregion
@@ -162,13 +155,13 @@ public class SQLUtils {
         Connection connect = connectDB();
         if (connect == null) return;
         
-        String sql = "insert into users_table (username, password, email, grade) values (?, ?, ?, ?);";
+        String sql = "insert into users_table (username, email, password, grade) values (?, ?, ?, ?);";
         
         try (PreparedStatement prepared = connect.prepareStatement(sql)) {
             prepared.setString(1, username);
             prepared.setString(2, email);
             prepared.setString(3, password);
-            prepared.setInt(5, grade);
+            prepared.setInt(4, grade);
             prepared.executeUpdate();
         } catch (Exception ignored) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error In addUser", "There was an error running the SQL information to add a user to the table.");
@@ -179,7 +172,7 @@ public class SQLUtils {
         Connection connect = connectDB();
         if (connect == null) return;
         
-        String sql = "update items set username = ?, email = ?, password = ?, grade = ? where username = ?;";
+        String sql = "update users_table set username = ?, email = ?, password = ?, grade = ? where username = ? limit 1;";
         
         try (PreparedStatement prepared = connect.prepareStatement(sql)) {
             prepared.setString(1, username);
@@ -206,6 +199,7 @@ public class SQLUtils {
             Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error in deleteUser", "There was an error deleting information from the user table.");
         }
     }
+    
     public static ObservableList<User> refreshUserTable() {
         Connection connect = connectDB();
         if (connect == null) return null;
@@ -221,13 +215,37 @@ public class SQLUtils {
                         result.getString("username"),
                         result.getString("password"),
                         result.getString("email"),
-                        result.getInt("grade")));
+                        result.getInt("grade"),
+                        result.getString("image_path")));
             return data;
-            
         } catch (Exception ignored) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Refreshing Table", "There was an error running the SQL information to refresh the user table.");
             return null;
         }
+    }
+    
+    public static User getUser(String username) {
+        Connection connection = connectDB();
+        if (connection == null) return null;
+        
+        String sql = "select * from users_table where username = ? limit 1;";
+        
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
+            prepared.setString(1, username);
+            ResultSet result = prepared.executeQuery();
+            
+            if (result.next())
+                return new User(
+                        result.getString(1),
+                        result.getString(2),
+                        result.getString(3),
+                        result.getInt(4),
+                        result.getString(5)
+                );
+        } catch (Exception ignored) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error In getUser", "Error Getting User From Database", "There was an error getting a user from the database, please try again.");
+        }
+        return null;
     }
     // endregion
     
@@ -253,10 +271,11 @@ public class SQLUtils {
             
             if (query) {
                 prepared.executeQuery();
-                return new User(username, password, email, -1);
+                return new User(username, password, email, -1, null);
             } else {
                 prepared.executeUpdate();
-                return null;
+                sql = "select * from users_table where username = ? and password = ? and email = ?;";
+                return runFormSQL(sql, username, password, email, true);
             }
             
         } catch (SQLException ignored) {

@@ -67,7 +67,7 @@ public class SignupLoginController {
             
             try {
                 if (signup.getStyleClass().contains("active"))
-                    SQLUtils.register(username.getText(), password.getText(), email.getText());
+                    user = SQLUtils.register(username.getText(), password.getText(), email.getText());
                 else
                     user = SQLUtils.login(username.getText(), password.getText(), email.getText());
             } catch (Exception ignored) {
@@ -123,28 +123,35 @@ public class SignupLoginController {
     }
     
     private boolean validForm() {
-        if (isFormEmpty())
+        String name = username.getText();
+        String pass = password.getText();
+        String confirmPass = confirmPassword.getText();
+        String mail = email.getText();
+        
+        if (isFormEmpty(name, pass, confirmPass, mail)) {
+            Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
             return false;
-        else if (signup.getStyleClass().contains("active")) {
+        } else if (signup.getStyleClass().contains("active")) {
             if (!regexValidation())
                 return false;
-            else if (!password.getText().equals(confirmPassword.getText())) {
+            else if (!pass.equals(confirmPass)) {
                 Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Passwords Must Match", "Password And Confirm Password Must Match");
                 return false;
+            } else if (SQLUtils.userExists(name)) {
+                Utils.errorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Already Exists", "Please enter information for a user that does not already exist.");
+                return false;
             }
-        } else if (login.getStyleClass().contains("active") && !SQLUtils.validInfo(username.getText(), password.getText(), email.getText())) {
-            Utils.errorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Does Not Exist", "Please enter valid information for a user that does already exist.");
+        } else if (login.getStyleClass().contains("active") && !SQLUtils.userExists(name)) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Does Not Exist", "Please enter valid information for a user that does already exists.");
             return false;
         }
+        
         return true;
     }
     
-    private boolean isFormEmpty() {
-        if (username.getText().isEmpty() || email.getText().isEmpty() || password.getText().isEmpty() || (signup.getStyleClass().contains("active") && confirmPassword.getText().isEmpty())) {
-            Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
-            return true;
-        }
-        return false;
+    private boolean isFormEmpty(String name, String pass, String confirmPass, String mail) {
+        return name.isEmpty() || mail.isEmpty() || pass.isEmpty() ||
+                (signup.getStyleClass().contains("active") && confirmPass.isEmpty());
     }
     
     private boolean regexValidation() {

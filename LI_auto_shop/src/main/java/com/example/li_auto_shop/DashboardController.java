@@ -16,16 +16,13 @@ import java.util.ResourceBundle;
 
 public class DashboardController implements Initializable {
     // region Variables
-//    private int option = 0;
     @FXML
-    private ImageView imageView;
+    private ImageView imageView, user_img;
     @FXML
     private Label welcomeText;
     @FXML
     private AnchorPane dashboard, welcomePage, databasePage, scannerPage, userPage;
     // region Table Variables
-//    @FXML
-//    private Button add_btn, update_btn, delete_btn;
     @FXML
     private TextField id_field, brand_field, model_field, price_field, quantity_field, reorder_field, scanner_id_field, username_field, email_field;
     @FXML
@@ -113,7 +110,6 @@ public class DashboardController implements Initializable {
         scannerPage.setVisible(false);
         userPage.setVisible(true);
     }
-    
     // endregion
     
     public void welcomeName(String name) {
@@ -134,78 +130,6 @@ public class DashboardController implements Initializable {
         quantity_field.setText(String.valueOf(item.getOn_hand()));
         reorder_field.setText(String.valueOf(item.getReorder_level()));
     }
-    
-//    @FXML
-//    private void switchFormAction(ActionEvent event) {
-//        switch (((Button) event.getSource()).getText()) {
-//            case "Add Item" -> switcher(1);
-//            case "Update Item" -> switcher(2);
-//            case "Delete Item" -> switcher(3);
-//        }
-//
-//        clearForm();
-//    }
-    
-//    private void switcher(int toActivate) {
-//        ObservableList<String> shortAdd = add_btn.getStyleClass(), shortUpdate = update_btn.getStyleClass(), shortDelete = delete_btn.getStyleClass();
-//
-//        shortAdd.clear();
-//        shortUpdate.clear();
-//        shortDelete.clear();
-//
-//        switch (toActivate) {
-//            case 1:
-//                shortAdd.add("active");
-//                shortAdd.remove("notActive");
-//                shortUpdate.add("notActive");
-//                shortDelete.add("notActive");
-//                option = 0;
-//
-//                break;
-//            case 2:
-//                shortAdd.add("notActive");
-//                shortUpdate.add("active");
-//                shortUpdate.remove("notActive");
-//                shortDelete.add("notActive");
-//                option = 1;
-//                break;
-//            case 3:
-//                shortAdd.add("notActive");
-//                shortUpdate.add("notActive");
-//                shortDelete.add("active");
-//                shortDelete.remove("notActive");
-//                option = 2;
-//                break;
-//        }
-//    }
-    
-//    @FXML
-//    private void submit() {
-//        if (!itemFormInvalid())
-//            return;
-//
-//        String id = id_field.getText();
-//        String brand = brand_field.getText();
-//        String model = model_field.getText();
-//        double price = Double.parseDouble(price_field.getText());
-//        int quantity = Integer.parseInt(quantity_field.getText());
-//        int reorder = Integer.parseInt(reorder_field.getText());
-//
-//        // option is 0 for add item, 1 for modify item, and 2 for delete item
-//        switch (option) {
-//            case 0 -> SQLUtils.addItem(id, brand, model, price, quantity, reorder);
-//            case 1 -> SQLUtils.updateItem(id, brand, model, price, quantity, reorder);
-//            case 2 -> {
-//                Optional<ButtonType> optionSelected = Utils.confirmAlert(Alert.AlertType.CONFIRMATION, "Form Validation", "Delete This Item", "Confirming, would you like to delete this piece of data?");
-//                if (optionSelected.isPresent() && optionSelected.get().getText().equals("Yes"))
-//                    SQLUtils.deleteItem(id_field.getText());
-//            }
-//        }
-//
-//        items = SQLUtils.refreshTable();
-//        table.setItems(items);
-//        clearForm();
-//    }
     
     @FXML
     private void addItem() {
@@ -251,17 +175,19 @@ public class DashboardController implements Initializable {
             return;
         
         Optional<ButtonType> optionSelected = Utils.confirmAlert(Alert.AlertType.CONFIRMATION, "Form Validation", "Delete This Item", "Confirming, would you like to delete this piece of data?");
-        if (optionSelected.isPresent() && optionSelected.get().getText().equals("Yes"))
+        if (optionSelected.isPresent() && optionSelected.get().getText().equals("Yes")) {
             SQLUtils.deleteItem(id_field.getText());
-        
-        items = SQLUtils.refreshTable();
-        table.setItems(items);
-        clearForm();
+            
+            items = SQLUtils.refreshTable();
+            table.setItems(items);
+            clearForm();
+        }
     }
     
     private boolean itemFormInvalid() {
-        if (id_field.getText().isEmpty() || brand_field.getText().isEmpty() || model_field.getText().isEmpty() ||
-                price_field.getText().isEmpty() || quantity_field.getText().isEmpty() || reorder_field.getText().isEmpty()) {
+        if (id_field.getText().isEmpty() || brand_field.getText().isEmpty() ||
+                model_field.getText().isEmpty() || price_field.getText().isEmpty() ||
+                quantity_field.getText().isEmpty() || reorder_field.getText().isEmpty()) {
             Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
             return true;
         }
@@ -293,7 +219,6 @@ public class DashboardController implements Initializable {
             spinner.getValueFactory().setValue(0);
             return;
         }
-        
         Utils.createImage(item.getPath(), imageView);
         spinner.getValueFactory().setValue(1);
     }
@@ -356,7 +281,7 @@ public class DashboardController implements Initializable {
             String id = scannerItem.getId();
             Item sqlItem = SQLUtils.getItem(id);
             
-            if(sqlItem == null)
+            if (sqlItem == null)
                 return;
             
             String brand = scannerItem.getBrand();
@@ -389,9 +314,24 @@ public class DashboardController implements Initializable {
     
     // region Users Form
     @FXML
+    private void loadUser() {
+        if (username_field.getText().isEmpty()) {
+            clearUsersForm();
+            return;
+        }
+        
+        User user = SQLUtils.getUser(username_field.getText());
+        if (user == null) {
+            Utils.createImage("fileNotFound.png", user_img);
+            return;
+        }
+        Utils.createImage(user.getImagePath(), user_img);
+    }
+    @FXML
     private void clearUsersForm() {
         username_field.clear();
         email_field.clear();
+        Utils.createImage("defaultImage.jpg", user_img);
     }
     
     @FXML
@@ -403,19 +343,21 @@ public class DashboardController implements Initializable {
         username_field.setText(user.getUsername());
         email_field.setText(user.getEmail());
 //        grade_field.setText(user.getGrade());
+        
+        Utils.createImage(user.getImagePath(), user_img);
     }
     
     @FXML
     private void addUser() {
-        if (userFormInvalid())
+        if (userFormInvalid() || userAlreadyExists())
             return;
         
         String username = username_field.getText();
         String email = email_field.getText();
 //        int grade = Integer.parseInt(grade_field.getText());
         
-        SQLUtils.addUser(username, email, null, -1);
-//        SQLUtils.addUser(username, email, null, grade);
+        SQLUtils.addUser(username, email, "", -1);
+//        SQLUtils.addUser(username, email, "", grade);
         
         clearUsersForm();
         userItems = SQLUtils.refreshUserTable();
@@ -431,8 +373,8 @@ public class DashboardController implements Initializable {
         String email = email_field.getText();
 //        int grade = Integer.parseInt(grade_field.getText());
         
-        SQLUtils.updateUser(username, email, null, -1);
-//        SQLUtils.updateUser(username, email, null, grade);
+        SQLUtils.updateUser(username, email, "", -1);
+//        SQLUtils.updateUser(username, email, "", grade);
         
         clearUsersForm();
         userItems = SQLUtils.refreshUserTable();
@@ -445,22 +387,36 @@ public class DashboardController implements Initializable {
             return;
         
         Optional<ButtonType> optionSelected = Utils.confirmAlert(Alert.AlertType.CONFIRMATION, "Form Validation", "Delete This User", "Confirming, would you like to delete this piece of data?");
-        if (optionSelected.isPresent() && optionSelected.get().getText().equals("Yes"))
+        if (optionSelected.isPresent() && optionSelected.get().getText().equals("Yes")) {
             SQLUtils.deleteUser(username_field.getText());
-        
-        clearUsersForm();
-        userItems = SQLUtils.refreshUserTable();
-        user_table.setItems(userItems);
+            
+            clearUsersForm();
+            userItems = SQLUtils.refreshUserTable();
+            user_table.setItems(userItems);
+        }
     }
     
     private boolean userFormInvalid() {
-        if (username_field.getText().isEmpty() || email_field.getText().isEmpty()) {
+        String username = username_field.getText();
+        String email = email_field.getText();
+        
+        if (username.isEmpty() || email.isEmpty()) {
             Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
             return true;
         }
         return false;
     }
     // endregion
+    
+    private boolean userAlreadyExists() {
+        String username = username_field.getText();
+        
+        if (SQLUtils.userExists(username)) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Already Exists", "Please enter information for a user that does not already exist.");
+            return true;
+        }
+        return false;
+    }
     
     @FXML
     private void logOut() {
