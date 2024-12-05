@@ -41,11 +41,11 @@ public class SQLUtils {
     // endregion
     
     // region Table
-    public static void addItem(String id, String brand, String model, double price, int on_hand, int reorder_level) {
+    public static void addItem(String id, String brand, String model, double price, int on_hand, int reorder_level, String path) {
         Connection connect = connectDB();
         if (connect == null) return;
         
-        String sql = "insert into items (id, brand, model_number, price, on_hand, reorder_level) values (?, ?, ?, ?, ?, ?);";
+        String sql = "insert into items (id, brand, model_number, price, on_hand, reorder_level, image) values (?, ?, ?, ?, ?, ?, ?);";
         
         try (PreparedStatement prepared = connect.prepareStatement(sql)) {
             prepared.setString(1, id);
@@ -54,17 +54,18 @@ public class SQLUtils {
             prepared.setDouble(4, price);
             prepared.setInt(5, on_hand);
             prepared.setInt(6, reorder_level);
+            prepared.setString(7, path);
             prepared.executeUpdate();
         } catch (Exception ignored) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error In addItem", "There was an error running the SQL information to add to the table.");
         }
     }
     
-    public static void updateItem(String id, String brand, String model, double price, int on_hand, int reorder_level) {
+    public static void updateItem(String id, String brand, String model, double price, int on_hand, int reorder_level, String path) {
         Connection connect = connectDB();
         if (connect == null) return;
         
-        String sql = "update items set id = ?, brand = ?, model_number = ?, price = ?, on_hand = ?, reorder_level = ? where id = ?;";
+        String sql = "update items set id = ?, brand = ?, model_number = ?, price = ?, on_hand = ?, reorder_level = ?, image = ? where id = ?;";
         
         try (PreparedStatement prepared = connect.prepareStatement(sql)) {
             prepared.setString(1, id);
@@ -73,7 +74,11 @@ public class SQLUtils {
             prepared.setDouble(4, price);
             prepared.setInt(5, on_hand);
             prepared.setInt(6, reorder_level);
-            prepared.setString(7, id);
+            if (path != null)
+                prepared.setString(7, path);
+            else
+                prepared.setString(7, getItem(id).getPath());
+            prepared.setString(8, id);
             prepared.executeUpdate();
         } catch (Exception ignored) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error In updateItem", "There was an error running the SQL information to update the table.");

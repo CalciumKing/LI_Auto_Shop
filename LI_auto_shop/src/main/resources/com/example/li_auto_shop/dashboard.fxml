@@ -12,120 +12,120 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="dashboard" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: midnightblue;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.li_auto_shop.DashboardController">
-   <AnchorPane fx:id="welcomePage" layoutX="10.0" layoutY="10.0" prefHeight="400.0" prefWidth="411.0" visible="false">
-      <Label fx:id="welcomeText" layoutX="113.0" layoutY="29.0" text="Welcome, NAME HERE" textFill="WHITE">
-         <font>
-            <Font name="System Bold" size="35.0" />
-         </font>
-      </Label>
-      <ImageView fitHeight="195.0" fitWidth="149.0" layoutX="424.0" layoutY="152.0" pickOnBounds="true" preserveRatio="true">
-         <Image url="@../../../../../../bin/Images/OCLogo.png" />
-      </ImageView>
-   </AnchorPane>
-   <AnchorPane fx:id="databasePage" prefHeight="410.0" prefWidth="606.0" visible="false">
-      <TableView fx:id="table" layoutX="124.0" layoutY="43.0" onMouseClicked="#selected" prefHeight="215.0" prefWidth="458.0">
-         <columns>
-            <TableColumn fx:id="id_col" text="ID" />
-            <TableColumn fx:id="brand_col" prefWidth="81.0" text="Brand" />
-            <TableColumn fx:id="model_col" prefWidth="85.0" text="Model" />
-            <TableColumn fx:id="price_col" prefWidth="60.0" text="Price" />
-            <TableColumn fx:id="on_hand_col" prefWidth="93.0" text="In Stock" />
-            <TableColumn fx:id="reorder_level_col" prefWidth="58.0" text="Reorder" />
-         </columns>
-      </TableView>
-      <Button layoutX="388.0" layoutY="292.0" mnemonicParsing="false" onAction="#addItem" prefHeight="32.0" prefWidth="82.0" styleClass="notActive" text="Add Item" />
-      <Button layoutX="388.0" layoutY="330.0" mnemonicParsing="false" onAction="#updateItem" prefHeight="29.0" prefWidth="82.0" styleClass="notActive" text="Update Item" />
-      <Button layoutX="477.0" layoutY="294.0" mnemonicParsing="false" onAction="#deleteItem" prefHeight="29.0" prefWidth="82.0" styleClass="notActive" text="Delete Item" />
-      <TextField fx:id="id_field" layoutX="170.0" layoutY="273.0" prefHeight="25.0" prefWidth="82.0" promptText="ID:" />
-      <TextField fx:id="brand_field" layoutX="170.0" layoutY="311.0" prefHeight="25.0" prefWidth="82.0" promptText="Brand:" />
-      <TextField fx:id="model_field" layoutX="170.0" layoutY="349.0" prefHeight="25.0" prefWidth="82.0" promptText="Model:" />
-      <TextField fx:id="price_field" layoutX="263.0" layoutY="273.0" prefHeight="25.0" prefWidth="82.0" promptText="Price:" />
-      <TextField fx:id="quantity_field" layoutX="263.0" layoutY="311.0" prefHeight="25.0" prefWidth="82.0" promptText="Quantity:" />
-      <TextField fx:id="reorder_field" layoutX="263.0" layoutY="349.0" prefHeight="25.0" prefWidth="82.0" promptText="Reorder:" />
-      <Button layoutX="478.0" layoutY="331.0" mnemonicParsing="false" onAction="#clearForm" styleClass="notActive" text="Clear Form" />
-      <Button layoutX="265.0" layoutY="378.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="178.0" styleClass="notActive" text="Select Image File" visible="false" />
-   </AnchorPane>
-   <AnchorPane fx:id="scannerPage" prefHeight="410.0" prefWidth="611.0" visible="false">
-      <ImageView fx:id="imageView" disable="true" fitHeight="195.0" fitWidth="243.0" layoutX="110.0" layoutY="72.0" pickOnBounds="true">
-         <Image url="@../../../../../../bin/Images/SeanRiley.jpg" />
-      </ImageView>
-      <TableView fx:id="scanner_table" layoutX="371.0" layoutY="69.0" onMouseClicked="#selectedScanner" prefHeight="200.0" prefWidth="226.0">
-         <columns>
-            <TableColumn fx:id="scanner_id_col" prefWidth="75.0" text="ID" />
-            <TableColumn fx:id="scanner_quantity_col" prefWidth="75.0" text="Quantity" />
-            <TableColumn fx:id="scanner_price_col" prefWidth="75.0" text="Price" />
-         </columns>
-      </TableView>
-      <TextField fx:id="scanner_id_field" layoutX="157.0" layoutY="302.0" onKeyTyped="#loadItem" promptText="Scan Item Or Input ID:" />
-      <Spinner fx:id="spinner" layoutX="157.0" layoutY="343.0" />
-      <Button layoutX="413.0" layoutY="302.0" mnemonicParsing="false" onAction="#clearScannerForm" styleClass="notActive" text="Clear" />
-      <Button layoutX="470.0" layoutY="302.0" mnemonicParsing="false" onAction="#submitScanner" styleClass="notActive" text="Submit Item" />
-      <Button layoutX="415.0" layoutY="343.0" mnemonicParsing="false" onAction="#finalizeScannerForm" prefHeight="25.0" prefWidth="139.0" styleClass="notActive" text="Finalize Changes" />
-   </AnchorPane>
-   <AnchorPane fx:id="userPage" prefHeight="410.0" prefWidth="611.0">
-      <children>
-         <TableView fx:id="user_table" layoutX="113.0" layoutY="44.0" onMouseClicked="#selectedUser" prefHeight="338.0" prefWidth="203.0">
+<AnchorPane fx:id="dashboard" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: midnightblue;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.li_auto_shop.DashboardController">
+    <AnchorPane fx:id="welcomePage" layoutX="10.0" layoutY="10.0" prefHeight="400.0" prefWidth="411.0">
+        <Label fx:id="welcomeText" layoutX="113.0" layoutY="29.0" text="Welcome, NAME HERE" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="35.0" />
+            </font>
+        </Label>
+        <ImageView fitHeight="195.0" fitWidth="149.0" layoutX="424.0" layoutY="152.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@../../../../../../bin/Images/OCLogo.png" />
+        </ImageView>
+    </AnchorPane>
+    <AnchorPane fx:id="databasePage" prefHeight="410.0" prefWidth="606.0" visible="false">
+        <TableView fx:id="table" layoutX="124.0" layoutY="43.0" onMouseClicked="#selected" prefHeight="215.0" prefWidth="458.0">
             <columns>
-               <TableColumn fx:id="username_col" text="Username" />
-               <TableColumn fx:id="email_col" prefWidth="81.0" text="Email" />
-               <TableColumn fx:id="grade_col" prefWidth="40.00006103515625" text="Grade" />
+                <TableColumn fx:id="id_col" text="ID" />
+                <TableColumn fx:id="brand_col" prefWidth="81.0" text="Brand" />
+                <TableColumn fx:id="model_col" prefWidth="85.0" text="Model" />
+                <TableColumn fx:id="price_col" prefWidth="60.0" text="Price" />
+                <TableColumn fx:id="on_hand_col" prefWidth="93.0" text="In Stock" />
+                <TableColumn fx:id="reorder_level_col" prefWidth="58.0" text="Reorder" />
             </columns>
-         </TableView>
-         <TextField fx:id="username_field" layoutX="325.0" layoutY="54.0" onKeyTyped="#loadUser" prefHeight="25.0" prefWidth="127.0" promptText="Username:" />
-         <TextField fx:id="email_field" layoutX="325.0" layoutY="92.0" prefHeight="25.0" prefWidth="127.0" promptText="Email:" />
-         <TextField fx:id="grade_field" disable="true" layoutX="306.0" layoutY="67.0" prefHeight="15.0" prefWidth="115.0" promptText="Grade:" visible="false" />
-         <Button layoutX="325.0" layoutY="134.0" mnemonicParsing="false" onAction="#addUser" prefHeight="28.0" prefWidth="61.0" styleClass="notActive" text="Add" />
-         <Button layoutX="390.0" layoutY="134.0" mnemonicParsing="false" onAction="#updateUser" prefHeight="28.0" prefWidth="61.0" styleClass="notActive" text="Modify" />
-         <Button layoutX="390.0" layoutY="175.0" mnemonicParsing="false" onAction="#deleteUser" prefHeight="29.0" prefWidth="61.0" styleClass="notActive" text="Delete" />
-         <Button layoutX="325.0" layoutY="175.0" mnemonicParsing="false" onAction="#clearUsersForm" prefHeight="29.0" prefWidth="61.0" styleClass="notActive" text="Clear" />
-         <ImageView fx:id="user_img" disable="true" fitHeight="154.0" fitWidth="127.0" layoutX="469.0" layoutY="51.0" pickOnBounds="true">
-            <image>
-               <Image url="@../../../../../../bin/Images/SeanRiley.jpg" />
-            </image>
-         </ImageView>
-         <TableView disable="true" layoutX="325.0" layoutY="228.0" onMouseClicked="#selected" prefHeight="154.0" prefWidth="279.0" visible="false">
+        </TableView>
+        <Button layoutX="421.0" layoutY="294.0" mnemonicParsing="false" onAction="#addItem" prefHeight="32.0" prefWidth="82.0" styleClass="notActive" text="Add Item" />
+        <Button layoutX="421.0" layoutY="332.0" mnemonicParsing="false" onAction="#updateItem" prefHeight="29.0" prefWidth="82.0" styleClass="notActive" text="Update Item" />
+        <Button layoutX="510.0" layoutY="296.0" mnemonicParsing="false" onAction="#deleteItem" prefHeight="29.0" prefWidth="82.0" styleClass="notActive" text="Delete Item" />
+        <TextField fx:id="id_field" layoutX="124.0" layoutY="265.0" prefHeight="25.0" prefWidth="82.0" promptText="ID:" />
+        <TextField fx:id="brand_field" layoutX="124.0" layoutY="303.0" prefHeight="25.0" prefWidth="82.0" promptText="Brand:" />
+        <TextField fx:id="model_field" layoutX="124.0" layoutY="341.0" prefHeight="25.0" prefWidth="82.0" promptText="Model:" />
+        <TextField fx:id="price_field" layoutX="217.0" layoutY="265.0" prefHeight="25.0" prefWidth="82.0" promptText="Price:" />
+        <TextField fx:id="quantity_field" layoutX="217.0" layoutY="303.0" prefHeight="25.0" prefWidth="82.0" promptText="Quantity:" />
+        <TextField fx:id="reorder_field" layoutX="217.0" layoutY="341.0" prefHeight="25.0" prefWidth="82.0" promptText="Reorder:" />
+        <Button layoutX="511.0" layoutY="333.0" mnemonicParsing="false" onAction="#clearForm" styleClass="notActive" text="Clear Form" />
+        <Button layoutX="265.0" layoutY="378.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="178.0" styleClass="notActive" text="Select Image File" visible="false" />
+        <Button layoutX="154.0" layoutY="372.0" mnemonicParsing="false" onAction="#chooseImage" text="Choose Image File" />
+        <ImageView fx:id="item_img" fitHeight="134.0" fitWidth="105.0" layoutX="308.0" layoutY="266.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@../../../../../../bin/Images/SeanRiley.jpg" />
+        </ImageView>
+    </AnchorPane>
+    <AnchorPane fx:id="scannerPage" prefHeight="410.0" prefWidth="611.0" visible="false">
+        <ImageView fx:id="scanner_img" disable="true" fitHeight="195.0" fitWidth="243.0" layoutX="110.0" layoutY="72.0" pickOnBounds="true">
+            <Image url="@../../../../../../bin/Images/SeanRiley.jpg" />
+        </ImageView>
+        <TableView fx:id="scanner_table" layoutX="371.0" layoutY="69.0" onMouseClicked="#selectedScanner" prefHeight="200.0" prefWidth="226.0">
             <columns>
-               <TableColumn text="Something" />
+                <TableColumn fx:id="scanner_id_col" prefWidth="75.0" text="ID" />
+                <TableColumn fx:id="scanner_quantity_col" prefWidth="75.0" text="Quantity" />
+                <TableColumn fx:id="scanner_price_col" prefWidth="75.0" text="Price" />
             </columns>
-         </TableView>
-      </children>
-   </AnchorPane>
-   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="410.0" stroke="BLACK" strokeType="INSIDE" width="105.0" />
-   <Button layoutX="13.0" layoutY="117.0" mnemonicParsing="false" onAction="#welcomePage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Welcome" textFill="WHITE">
-      <font>
-         <Font name="System Bold" size="12.0" />
-      </font>
-   </Button>
-   <Button layoutX="13.0" layoutY="161.0" mnemonicParsing="false" onAction="#databasePage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Database" textFill="WHITE">
-      <font>
-         <Font name="System Bold" size="12.0" />
-      </font>
-   </Button>
-   <Button layoutX="13.0" layoutY="207.0" mnemonicParsing="false" onAction="#scannerPage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Scanner" textFill="WHITE">
-      <font>
-         <Font name="System Bold" size="12.0" />
-      </font>
-   </Button>
-   <Button layoutX="13.0" layoutY="256.0" mnemonicParsing="false" onAction="#usersPage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Users" textFill="WHITE">
-      <font>
-         <Font name="System Bold" size="12.0" />
-      </font>
-   </Button>
-   <Button layoutX="13.0" layoutY="353.0" mnemonicParsing="false" onAction="#logOut" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Log Out" textFill="WHITE">
-      <font>
-         <Font name="System Bold" size="12.0" />
-      </font>
-   </Button>
-   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseClicked="#Click" onMouseDragged="#Drag" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="611.0" />
-   <Button layoutX="565.0" layoutY="1.0" mnemonicParsing="false" onAction="#Minimize" styleClass="min" text="-" textFill="#0d00c5">
-      <font>
-         <Font name="System Bold" size="12.0" />
-      </font>
-   </Button>
-   <Button layoutX="587.0" layoutY="1.0" mnemonicParsing="false" onAction="#Close" styleClass="close" text="X" textFill="#0d00c5">
-      <font>
-         <Font name="System Bold" size="12.0" />
-      </font>
-   </Button>
+        </TableView>
+        <TextField fx:id="scanner_id_field" layoutX="157.0" layoutY="302.0" onKeyTyped="#loadItem" promptText="Scan Item Or Input ID:" />
+        <Spinner fx:id="spinner" layoutX="157.0" layoutY="343.0" />
+        <Button layoutX="413.0" layoutY="302.0" mnemonicParsing="false" onAction="#clearScannerForm" styleClass="notActive" text="Clear" />
+        <Button layoutX="470.0" layoutY="302.0" mnemonicParsing="false" onAction="#submitScanner" styleClass="notActive" text="Submit Item" />
+        <Button layoutX="415.0" layoutY="343.0" mnemonicParsing="false" onAction="#finalizeScannerForm" prefHeight="25.0" prefWidth="139.0" styleClass="notActive" text="Finalize Changes" />
+    </AnchorPane>
+    <AnchorPane fx:id="userPage" prefHeight="410.0" prefWidth="611.0" visible="false">
+        <TableView fx:id="user_table" layoutX="113.0" layoutY="44.0" onMouseClicked="#selectedUser" prefHeight="338.0" prefWidth="203.0">
+            <columns>
+                <TableColumn fx:id="username_col" text="Username" />
+                <TableColumn fx:id="email_col" prefWidth="81.0" text="Email" />
+                <TableColumn fx:id="grade_col" prefWidth="40.00006103515625" text="Grade" />
+            </columns>
+        </TableView>
+        <TextField fx:id="username_field" layoutX="325.0" layoutY="54.0" onKeyTyped="#loadUser" prefHeight="25.0" prefWidth="127.0" promptText="Username:" />
+        <TextField fx:id="email_field" layoutX="325.0" layoutY="92.0" prefHeight="25.0" prefWidth="127.0" promptText="Email:" />
+        <TextField fx:id="grade_field" disable="true" layoutX="306.0" layoutY="67.0" prefHeight="15.0" prefWidth="115.0" promptText="Grade:" visible="false" />
+        <Button layoutX="325.0" layoutY="134.0" mnemonicParsing="false" onAction="#addUser" prefHeight="28.0" prefWidth="61.0" styleClass="notActive" text="Add" />
+        <Button layoutX="390.0" layoutY="134.0" mnemonicParsing="false" onAction="#updateUser" prefHeight="28.0" prefWidth="61.0" styleClass="notActive" text="Modify" />
+        <Button layoutX="390.0" layoutY="175.0" mnemonicParsing="false" onAction="#deleteUser" prefHeight="29.0" prefWidth="61.0" styleClass="notActive" text="Delete" />
+        <Button layoutX="325.0" layoutY="175.0" mnemonicParsing="false" onAction="#clearUsersForm" prefHeight="29.0" prefWidth="61.0" styleClass="notActive" text="Clear" />
+        <ImageView fx:id="user_img" disable="true" fitHeight="154.0" fitWidth="127.0" layoutX="469.0" layoutY="51.0" pickOnBounds="true">
+            <Image url="@../../../../../../bin/Images/SeanRiley.jpg" />
+        </ImageView>
+        <TableView disable="true" layoutX="325.0" layoutY="228.0" onMouseClicked="#selected" prefHeight="154.0" prefWidth="279.0" visible="false">
+            <columns>
+                <TableColumn text="Something" />
+            </columns>
+        </TableView>
+    </AnchorPane>
+    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="410.0" stroke="BLACK" strokeType="INSIDE" width="105.0" />
+    <Button layoutX="13.0" layoutY="117.0" mnemonicParsing="false" onAction="#welcomePage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Welcome" textFill="WHITE">
+        <font>
+            <Font name="System Bold" size="12.0" />
+        </font>
+    </Button>
+    <Button layoutX="13.0" layoutY="161.0" mnemonicParsing="false" onAction="#databasePage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Database" textFill="WHITE">
+        <font>
+            <Font name="System Bold" size="12.0" />
+        </font>
+    </Button>
+    <Button layoutX="13.0" layoutY="207.0" mnemonicParsing="false" onAction="#scannerPage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Scanner" textFill="WHITE">
+        <font>
+            <Font name="System Bold" size="12.0" />
+        </font>
+    </Button>
+    <Button layoutX="13.0" layoutY="256.0" mnemonicParsing="false" onAction="#usersPage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Users" textFill="WHITE">
+        <font>
+            <Font name="System Bold" size="12.0" />
+        </font>
+    </Button>
+    <Button layoutX="13.0" layoutY="353.0" mnemonicParsing="false" onAction="#logOut" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Log Out" textFill="WHITE">
+        <font>
+            <Font name="System Bold" size="12.0" />
+        </font>
+    </Button>
+    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseClicked="#Click" onMouseDragged="#Drag" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="611.0" />
+    <Button layoutX="565.0" layoutY="1.0" mnemonicParsing="false" onAction="#Minimize" styleClass="min" text="-" textFill="#0d00c5">
+        <font>
+            <Font name="System Bold" size="12.0" />
+        </font>
+    </Button>
+    <Button layoutX="587.0" layoutY="1.0" mnemonicParsing="false" onAction="#Close" styleClass="close" text="X" textFill="#0d00c5">
+        <font>
+            <Font name="System Bold" size="12.0" />
+        </font>
+    </Button>
 </AnchorPane>

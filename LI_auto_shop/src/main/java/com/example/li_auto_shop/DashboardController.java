@@ -6,18 +6,26 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DashboardController implements Initializable {
     // region Variables
     @FXML
-    private ImageView imageView, user_img;
+    private ImageView item_img, scanner_img, user_img;
+    private String imagePath = "";
     @FXML
     private Label welcomeText;
     @FXML
@@ -129,6 +137,9 @@ public class DashboardController implements Initializable {
         price_field.setText(String.valueOf(item.getPrice()));
         quantity_field.setText(String.valueOf(item.getOn_hand()));
         reorder_field.setText(String.valueOf(item.getReorder_level()));
+        imagePath = item.getPath();
+        
+        Utils.createImage(item.getPath(), item_img);
     }
     
     @FXML
@@ -143,7 +154,7 @@ public class DashboardController implements Initializable {
         int quantity = Integer.parseInt(quantity_field.getText());
         int reorder = Integer.parseInt(reorder_field.getText());
         
-        SQLUtils.addItem(id, brand, model, price, quantity, reorder);
+        SQLUtils.addItem(id, brand, model, price, quantity, reorder, imagePath);
         
         items = SQLUtils.refreshTable();
         table.setItems(items);
@@ -162,7 +173,7 @@ public class DashboardController implements Initializable {
         int quantity = Integer.parseInt(quantity_field.getText());
         int reorder = Integer.parseInt(reorder_field.getText());
         
-        SQLUtils.updateItem(id, brand, model, price, quantity, reorder);
+        SQLUtils.updateItem(id, brand, model, price, quantity, reorder, imagePath);
         
         items = SQLUtils.refreshTable();
         table.setItems(items);
@@ -202,6 +213,35 @@ public class DashboardController implements Initializable {
         price_field.clear();
         quantity_field.clear();
         reorder_field.clear();
+        
+        imagePath = "";
+        Utils.createImage("bin\\Images\\defaultImage.jpg", item_img);
+    }
+    
+    @FXML
+    private void chooseImage() throws IOException {
+        FileChooser open = new FileChooser();
+        open.setTitle("Open Image File");
+        open.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                "Image File", "*.jpg", "*.jpeg", "*.png"));
+        
+        Stage stage = (Stage) item_img.getScene().getWindow();
+        File file = open.showOpenDialog(stage);
+        
+        if (file != null) {
+            File saveFolder = new File("bin\\Images");
+            if (!saveFolder.exists())
+                if(!saveFolder.mkdirs())
+                    return;
+            
+            File saveFile = new File(saveFolder, file.getName());
+            Files.copy(file.toPath(), saveFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            
+            Image image = new Image(file.toURI().toString(), 125, 165, false, true);
+            item_img.setImage(image);
+            imagePath = saveFile.getPath();
+            System.out.println(imagePath);
+        }
     }
     // endregion
     
@@ -215,18 +255,18 @@ public class DashboardController implements Initializable {
         
         Item item = SQLUtils.getItem(scanner_id_field.getText());
         if (item == null) {
-            Utils.createImage("fileNotFound.png", imageView);
+            Utils.createImage("bin\\Images\\fileNotFound.png", scanner_img);
             spinner.getValueFactory().setValue(0);
             return;
         }
-        Utils.createImage(item.getPath(), imageView);
+        Utils.createImage(item.getPath(), scanner_img);
         spinner.getValueFactory().setValue(1);
     }
     
     @FXML
     private void clearScannerForm() {
         scanner_id_field.clear();
-        Utils.createImage("defaultImage.jpg", imageView);
+        Utils.createImage("bin\\Images\\defaultImage.jpg", scanner_img);
         spinner.getValueFactory().setValue(0);
     }
     
@@ -290,7 +330,7 @@ public class DashboardController implements Initializable {
             int quantity = sqlItem.getOn_hand() + scannerItem.getOn_hand();
             int reorder = scannerItem.getReorder_level();
             
-            SQLUtils.updateItem(id, brand, model, price, quantity, reorder);
+            SQLUtils.updateItem(id, brand, model, price, quantity, reorder, null);
         }
         
         clearScannerForm();
@@ -306,7 +346,7 @@ public class DashboardController implements Initializable {
         if (item == null)
             return;
         
-        Utils.createImage(item.getPath(), imageView);
+        Utils.createImage(item.getPath(), scanner_img);
         scanner_id_field.setText(item.getId());
         spinner.getValueFactory().setValue(1);
     }
@@ -322,7 +362,7 @@ public class DashboardController implements Initializable {
         
         User user = SQLUtils.getUser(username_field.getText());
         if (user == null) {
-            Utils.createImage("fileNotFound.png", user_img);
+            Utils.createImage("bin\\Images\\fileNotFound.png", user_img);
             return;
         }
         Utils.createImage(user.getImagePath(), user_img);
@@ -331,7 +371,7 @@ public class DashboardController implements Initializable {
     private void clearUsersForm() {
         username_field.clear();
         email_field.clear();
-        Utils.createImage("defaultImage.jpg", user_img);
+        Utils.createImage("bin\\Images\\defaultImage.jpg", user_img);
     }
     
     @FXML
@@ -406,7 +446,6 @@ public class DashboardController implements Initializable {
         }
         return false;
     }
-    // endregion
     
     private boolean userAlreadyExists() {
         String username = username_field.getText();
@@ -417,6 +456,7 @@ public class DashboardController implements Initializable {
         }
         return false;
     }
+    // endregion
     
     @FXML
     private void logOut() {

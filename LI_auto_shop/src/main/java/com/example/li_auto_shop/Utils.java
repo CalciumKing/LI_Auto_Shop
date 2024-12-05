@@ -21,7 +21,6 @@ import java.util.Optional;
 public class Utils {
     private static double xOffset;
     private static double yOffset;
-    private static final String imageFolderPath = System.getProperty("user.dir") + "\\bin\\Images";
     
     // region Alert Methods
     public static void errorAlert(Alert.AlertType type, String title, String headerText, String contentText) {
@@ -68,9 +67,8 @@ public class Utils {
     }
     
     public static void createImage(String path, ImageView imageView) {
-        File imageDir = new File(imageFolderPath);
-        File imageFile = new File(imageDir, ((path == null) ? "NoImage.jpg" : path));
-        Image image = new Image(imageFile.toURI().toString(), 125, 165, true, true);
+        String uri = (path != null) ? "file:" + path : "file:" + "bin\\Images\\NoImage.jpg";
+        Image image = new Image(uri, 125, 165, true, true);
         
         if (image.isError())
             System.out.println("Error loading image: " + image.getException().getMessage());
