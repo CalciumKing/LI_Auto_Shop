@@ -69,7 +69,7 @@ public class SignupLoginController {
                 if (signup.getStyleClass().contains("active"))
                     user = SQLUtils.register(username.getText(), password.getText(), email.getText());
                 else
-                    user = SQLUtils.login(username.getText(), password.getText(), email.getText());
+                    user = SQLUtils.login(username.getText(), password.getText());
             } catch (Exception ignored) {
                 Utils.errorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information from MainController", "There was an error retrieving the SQL information, or that user doesn't exist.");
             }
@@ -149,9 +149,9 @@ public class SignupLoginController {
         return true;
     }
     
-    private boolean isFormEmpty(String name, String pass, String confirmPass, String mail) {
-        return name.isEmpty() || mail.isEmpty() || pass.isEmpty() ||
-                (signup.getStyleClass().contains("active") && confirmPass.isEmpty());
+    private boolean isFormEmpty(String username, String password, String confirmPass, String email) {
+        return username.isEmpty() || password.isEmpty() ||
+                (signup.getStyleClass().contains("active") && (confirmPass.isEmpty() || email.isEmpty()));
     }
     
     private boolean regexValidation() {

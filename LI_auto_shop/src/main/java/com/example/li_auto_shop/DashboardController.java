@@ -26,33 +26,49 @@ public class DashboardController implements Initializable {
     @FXML
     private ImageView item_img, scanner_img, user_img;
     private String imagePath = "";
+    
     @FXML
     private Label welcomeText;
+    private String username = "seanriley";
     @FXML
     private AnchorPane dashboard, welcomePage, databasePage, scannerPage, userPage;
-    // region Table Variables
     @FXML
     private TextField id_field, brand_field, model_field, price_field, quantity_field, reorder_field, scanner_id_field, username_field, email_field;
     @FXML
     private Spinner<Integer> spinner;
+    
+    // region Table Variables
     @FXML
     private TableView<Item> table, scanner_table;
+    @FXML
+    private TableView<User> user_table;
+    @FXML
+    private TableView<AdjustedItem> transaction_table;
+    
     @FXML
     private TableColumn<Item, String> id_col, brand_col, model_col, scanner_id_col;
     @FXML
     private TableColumn<Item, Integer> on_hand_col, reorder_level_col, scanner_quantity_col;
     @FXML
     private TableColumn<Item, Double> price_col, scanner_price_col;
-    @FXML
-    private TableView<User> user_table;
+    
     @FXML
     private TableColumn<User, String> username_col, email_col;
     @FXML
     private TableColumn<User, Integer> grade_col;
+    
+    @FXML
+    private TableColumn<AdjustedItem, Integer> trans_id_col, adjustment_col;
+    @FXML
+    private TableColumn<AdjustedItem, String> item_id_col;
+    
     @FXML
     private ObservableList<Item> items, scannerItems;
     @FXML
     private ObservableList<User> userItems;
+    @FXML
+    private ObservableList<AdjustedItem> adjustedItems;
+    // endregion
     
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -63,9 +79,9 @@ public class DashboardController implements Initializable {
         on_hand_col.setCellValueFactory(new PropertyValueFactory<>("on_hand"));
         reorder_level_col.setCellValueFactory(new PropertyValueFactory<>("reorder_level"));
         
-        clearForm();
         items = SQLUtils.refreshTable();
         table.setItems(items);
+        clearForm();
         
         scanner_id_col.setCellValueFactory(new PropertyValueFactory<>("id"));
         scanner_quantity_col.setCellValueFactory(new PropertyValueFactory<>("on_hand"));
@@ -79,11 +95,15 @@ public class DashboardController implements Initializable {
         email_col.setCellValueFactory(new PropertyValueFactory<>("email"));
         grade_col.setCellValueFactory(new PropertyValueFactory<>("grade"));
         
-        clearUsersForm();
+        trans_id_col.setCellValueFactory(new PropertyValueFactory<>("trans_ID"));
+        item_id_col.setCellValueFactory(new PropertyValueFactory<>("item_ID"));
+        adjustment_col.setCellValueFactory(new PropertyValueFactory<>("adjustment"));
+        
         userItems = SQLUtils.refreshUserTable();
         user_table.setItems(userItems);
+        adjustedItems = transaction_table.getItems();
+        clearUsersForm();
     }
-    // endregion
     // endregion
     
     // region Side NavBar
@@ -121,10 +141,11 @@ public class DashboardController implements Initializable {
     // endregion
     
     public void welcomeName(String name) {
-        welcomeText.setText("Welcome, " + name);
+        username = name;
+        welcomeText.setText("Welcome, " + username);
     }
     
-    // region Form
+    // region Items Table/Form
     @FXML
     private void selected() {
         Item item = table.getSelectionModel().getSelectedItem();
@@ -240,12 +261,11 @@ public class DashboardController implements Initializable {
             Image image = new Image(file.toURI().toString(), 125, 165, false, true);
             item_img.setImage(image);
             imagePath = saveFile.getPath();
-            System.out.println(imagePath);
         }
     }
     // endregion
     
-    // region Scanner Form
+    // region Scanner Table/Form
     @FXML
     private void loadItem() {
         if (scanner_id_field.getText().isEmpty()) {
@@ -331,6 +351,7 @@ public class DashboardController implements Initializable {
             int reorder = scannerItem.getReorder_level();
             
             SQLUtils.updateItem(id, brand, model, price, quantity, reorder, null);
+            SQLUtils.addTransaction(null, username, id, scannerItem.getOn_hand());
         }
         
         clearScannerForm();
@@ -352,7 +373,7 @@ public class DashboardController implements Initializable {
     }
     // endregion
     
-    // region Users Form
+    // region Users Table/Form
     @FXML
     private void loadUser() {
         if (username_field.getText().isEmpty()) {
@@ -372,6 +393,8 @@ public class DashboardController implements Initializable {
         username_field.clear();
         email_field.clear();
         Utils.createImage("bin\\Images\\defaultImage.jpg", user_img);
+        adjustedItems.clear();
+        transaction_table.setItems(adjustedItems);
     }
     
     @FXML
@@ -380,11 +403,18 @@ public class DashboardController implements Initializable {
         if (user == null)
             return;
         
-        username_field.setText(user.getUsername());
-        email_field.setText(user.getEmail());
-//        grade_field.setText(user.getGrade());
+        String name = user.getUsername();
+        String email = user.getEmail();
+//        int grade = user.getGrade();
+        
+        username_field.setText(name);
+        email_field.setText(email);
+//        grade_field.setText(String.valueOf(grade));
         
         Utils.createImage(user.getImagePath(), user_img);
+        
+        adjustedItems = SQLUtils.getTransactions(name);
+        transaction_table.setItems(adjustedItems);
     }
     
     @FXML
@@ -456,6 +486,9 @@ public class DashboardController implements Initializable {
         }
         return false;
     }
+    // endregion
+    
+    // region Transaction Table
     // endregion
     
     @FXML

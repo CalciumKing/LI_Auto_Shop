@@ -8,9 +8,9 @@ import java.sql.*;
 
 public class SQLUtils {
     // region Login/Signup
-    public static User login(String username, String password, String email) {
+    public static User login(String username, String password) {
         String sql = "select * from users_table where username = ? and password = ? and email = ? limit 1;";
-        return runFormSQL(sql, username, password, email, true);
+        return runFormSQL(sql, username, password, null, true);
     }
     
     public static User register(String username, String password, String email) {
@@ -24,12 +24,12 @@ public class SQLUtils {
     }
     
     public static boolean userExists(String username) {
-        Connection connect = connectDB();
-        if (connect == null) return false;
+        Connection connection = connectDB();
+        if (connection == null) return false;
         
         String sql = "select * from users_table where username = ?;";
         
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
             prepared.setString(1, username);
             ResultSet result = prepared.executeQuery();
             return result.next();
@@ -42,12 +42,12 @@ public class SQLUtils {
     
     // region Table
     public static void addItem(String id, String brand, String model, double price, int on_hand, int reorder_level, String path) {
-        Connection connect = connectDB();
-        if (connect == null) return;
+        Connection connection = connectDB();
+        if (connection == null) return;
         
         String sql = "insert into items (id, brand, model_number, price, on_hand, reorder_level, image) values (?, ?, ?, ?, ?, ?, ?);";
         
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
             prepared.setString(1, id);
             prepared.setString(2, brand);
             prepared.setString(3, model);
@@ -62,12 +62,12 @@ public class SQLUtils {
     }
     
     public static void updateItem(String id, String brand, String model, double price, int on_hand, int reorder_level, String path) {
-        Connection connect = connectDB();
-        if (connect == null) return;
+        Connection connection = connectDB();
+        if (connection == null) return;
         
         String sql = "update items set id = ?, brand = ?, model_number = ?, price = ?, on_hand = ?, reorder_level = ?, image = ? where id = ?;";
         
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
             prepared.setString(1, id);
             prepared.setString(2, brand);
             prepared.setString(3, model);
@@ -86,12 +86,12 @@ public class SQLUtils {
     }
     
     public static void deleteItem(String id) {
-        Connection connect = connectDB();
-        if (connect == null) return;
+        Connection connection = connectDB();
+        if (connection == null) return;
         
         String sql = "delete from items where id = ?;";
         
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
             prepared.setString(1, id);
             prepared.executeUpdate();
         } catch (Exception ignored) {
@@ -100,12 +100,12 @@ public class SQLUtils {
     }
     
     public static ObservableList<Item> refreshTable() {
-        Connection connect = connectDB();
-        if (connect == null) return null;
+        Connection connection = connectDB();
+        if (connection == null) return null;
         
         String sql = "select * from items;";
         
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
             ResultSet result = prepared.executeQuery();
             ObservableList<Item> data = FXCollections.observableArrayList();
             
@@ -153,16 +153,40 @@ public class SQLUtils {
         
         return null;
     }
+    
+    public static void addTransaction(Date date, String username, String item_ID, int adjustment) {
+        Connection connection = connectDB();
+        if (connection == null) return;
+        
+        String sql = "insert into transactions (date, username) values (?, ?);";
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
+            prepared.setDate(1, date);
+            prepared.setString(2, username);
+            prepared.executeUpdate();
+        } catch (Exception ignored) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error in addTransaction", "Error Adding Transaction To Database", "There was an error adding a transaction to the database, please try again.");
+            return;
+        }
+        
+        sql = "insert into item_adjust (trans_ID, item_ID, adjustment) values ((select max(trans_ID) from transactions), ?, ?);";
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
+            prepared.setString(1, item_ID);
+            prepared.setInt(2, adjustment);
+            prepared.executeUpdate();
+        } catch (Exception ignored) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error in addTransaction", "Error Adding Item Adjustment To Database", "There was an error adding an item adjustment to the database, please try again.");
+        }
+    }
     // endregion
     
     // region User Table
     public static void addUser(String username, String email, String password, int grade) {
-        Connection connect = connectDB();
-        if (connect == null) return;
+        Connection connection = connectDB();
+        if (connection == null) return;
         
         String sql = "insert into users_table (username, email, password, grade) values (?, ?, ?, ?);";
         
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
             prepared.setString(1, username);
             prepared.setString(2, email);
             prepared.setString(3, password);
@@ -174,12 +198,12 @@ public class SQLUtils {
     }
     
     public static void updateUser(String username, String email, String password, int grade) {
-        Connection connect = connectDB();
-        if (connect == null) return;
+        Connection connection = connectDB();
+        if (connection == null) return;
         
         String sql = "update users_table set username = ?, email = ?, password = ?, grade = ? where username = ? limit 1;";
         
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
             prepared.setString(1, username);
             prepared.setString(2, email);
             prepared.setString(3, password);
@@ -192,12 +216,12 @@ public class SQLUtils {
     }
     
     public static void deleteUser(String username) {
-        Connection connect = connectDB();
-        if (connect == null) return;
+        Connection connection = connectDB();
+        if (connection == null) return;
         
         String sql = "delete from users_table where username = ?;";
         
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
             prepared.setString(1, username);
             prepared.executeUpdate();
         } catch (Exception ignored) {
@@ -206,12 +230,12 @@ public class SQLUtils {
     }
     
     public static ObservableList<User> refreshUserTable() {
-        Connection connect = connectDB();
-        if (connect == null) return null;
+        Connection connection = connectDB();
+        if (connection == null) return null;
         
         String sql = "select * from users_table;";
         
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
             ResultSet result = prepared.executeQuery();
             ObservableList<User> data = FXCollections.observableArrayList();
             
@@ -252,6 +276,33 @@ public class SQLUtils {
         }
         return null;
     }
+    
+    public static ObservableList<AdjustedItem> getTransactions(String username) {
+        Connection connection = connectDB();
+        if (connection == null) return null;
+        
+        String sql = "select * from item_adjust where trans_id in (select trans_ID from transactions where username=?);";
+        
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
+            prepared.setString(1, username);
+            
+            ResultSet result = prepared.executeQuery();
+            ObservableList<AdjustedItem> data = FXCollections.observableArrayList();
+            
+            while (result.next())
+                data.add(new AdjustedItem(
+                        result.getInt("trans_ID"),
+                        result.getInt("adjustment"),
+                        result.getString("item_ID")
+                ));
+            return data;
+        } catch (Exception e) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error in getTransaction", "Error Getting Transactions From Database", "There was an error getting transactions from the database, please try again.");
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
     // endregion
     
     // region Utils
@@ -265,18 +316,20 @@ public class SQLUtils {
     }
     
     private static User runFormSQL(String sql, String username, String password, String email, boolean query) {
-        Connection connect = connectDB();
-        if (connect == null)
+        Connection connection = connectDB();
+        if (connection == null)
             return null;
         
-        try (PreparedStatement prepared = connect.prepareStatement(sql)) {
+        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
             prepared.setString(1, username);
             prepared.setString(2, password);
-            prepared.setString(3, email);
+            if (email != null)
+                prepared.setString(3, email);
             
             if (query) {
                 prepared.executeQuery();
-                return new User(username, password, email, -1, null);
+                return getUser(username);
+//                return new User(username, password, email, -1, null);
             } else {
                 prepared.executeUpdate();
                 sql = "select * from users_table where username = ? and password = ? and email = ?;";
