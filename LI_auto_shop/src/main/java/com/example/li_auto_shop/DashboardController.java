@@ -24,12 +24,14 @@ import java.util.ResourceBundle;
 public class DashboardController implements Initializable {
     // region Variables
     @FXML
+    private Button users_page_btn;
+    @FXML
     private ImageView item_img, scanner_img, user_img;
     private String imagePath = "";
     
     @FXML
     private Label welcomeText;
-    private String username = "seanriley";
+    private String username = ""; // set to an existing user for faster testing
     @FXML
     private AnchorPane dashboard, welcomePage, databasePage, scannerPage, userPage;
     @FXML
@@ -140,9 +142,10 @@ public class DashboardController implements Initializable {
     }
     // endregion
     
-    public void welcomeName(String name) {
-        username = name;
+    public void welcomeName(User user) {
+        username = user.getUsername();
         welcomeText.setText("Welcome, " + username);
+        users_page_btn.setVisible(user.getGrade() == -1);
     }
     
     // region Items Table/Form
@@ -252,7 +255,7 @@ public class DashboardController implements Initializable {
         if (file != null) {
             File saveFolder = new File("bin\\Images");
             if (!saveFolder.exists())
-                if(!saveFolder.mkdirs())
+                if (!saveFolder.mkdirs())
                     return;
             
             File saveFile = new File(saveFolder, file.getName());
@@ -334,6 +337,8 @@ public class DashboardController implements Initializable {
     
     @FXML
     private void finalizeScannerForm() {
+        SQLUtils.addTransaction(null, username);
+        
         for (Item scannerItem : scannerItems) {
             if (scannerItem == null)
                 continue;
@@ -342,7 +347,7 @@ public class DashboardController implements Initializable {
             Item sqlItem = SQLUtils.getItem(id);
             
             if (sqlItem == null)
-                return;
+                continue;
             
             String brand = scannerItem.getBrand();
             String model = scannerItem.getModel();
@@ -351,7 +356,7 @@ public class DashboardController implements Initializable {
             int reorder = scannerItem.getReorder_level();
             
             SQLUtils.updateItem(id, brand, model, price, quantity, reorder, null);
-            SQLUtils.addTransaction(null, username, id, scannerItem.getOn_hand());
+            SQLUtils.addAdjustment(id, scannerItem.getOn_hand());
         }
         
         clearScannerForm();
@@ -419,14 +424,16 @@ public class DashboardController implements Initializable {
     
     @FXML
     private void addUser() {
-        if (userFormInvalid() || userAlreadyExists())
-            return;
-        
         String username = username_field.getText();
         String email = email_field.getText();
 //        int grade = Integer.parseInt(grade_field.getText());
         
-        SQLUtils.addUser(username, email, "", -1);
+        if (userFormInvalid() || userAlreadyExists() || Utils.regexValidation(email, null))
+            return;
+        
+        // grade can be changed in the future
+        // users with a grade of -1 are admin
+        SQLUtils.addUser(username, email, "", 0);
 //        SQLUtils.addUser(username, email, "", grade);
         
         clearUsersForm();
@@ -480,15 +487,12 @@ public class DashboardController implements Initializable {
     private boolean userAlreadyExists() {
         String username = username_field.getText();
         
-        if (SQLUtils.userExists(username)) {
+        if (SQLUtils.getUser(username) != null) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Already Exists", "Please enter information for a user that does not already exist.");
             return true;
         }
         return false;
     }
-    // endregion
-    
-    // region Transaction Table
     // endregion
     
     @FXML

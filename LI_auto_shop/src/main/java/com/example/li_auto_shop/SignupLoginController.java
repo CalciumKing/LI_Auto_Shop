@@ -7,8 +7,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
-import java.util.regex.Pattern;
-
 public class SignupLoginController {
     // region Variables
     @FXML
@@ -36,6 +34,7 @@ public class SignupLoginController {
             shortSignUp.remove("notActive");
             shortSignUp.add("active");
             
+            email.setVisible(true);
             confirmPassword.setVisible(true);
             formButton.setText("Sign Up");
             forgotPassword.setVisible(false);
@@ -49,6 +48,7 @@ public class SignupLoginController {
             shortLogin.remove("notActive");
             shortLogin.add("active");
             
+            email.setVisible(false);
             confirmPassword.setVisible(false);
             formButton.setText("Login");
             password.setPromptText("Password:");
@@ -63,25 +63,28 @@ public class SignupLoginController {
     @FXML
     private void formSubmit() {
         if (validForm()) {
-            User user = null;
-            
             try {
-                if (signup.getStyleClass().contains("active"))
-                    user = SQLUtils.register(username.getText(), password.getText(), email.getText());
-                else
-                    user = SQLUtils.login(username.getText(), password.getText());
+                User user = (signup.getStyleClass().contains("active")) ?
+                        SQLUtils.register(username.getText(), password.getText(), email.getText()) :
+                        SQLUtils.login(username.getText(), password.getText());
+                
+                if (user == null) {
+                    Utils.errorAlert(Alert.AlertType.ERROR, "Null User", "That User Does Not Exist", "Please enter information for a user that does already exist.");
+                    return;
+                }
+                
+                Utils.changeScene("dashboard.fxml", user);
+                page.getScene().getWindow().hide();
+                clearForm();
             } catch (Exception ignored) {
                 Utils.errorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information from MainController", "There was an error retrieving the SQL information, or that user doesn't exist.");
             }
-            
-            Utils.changeScene("dashboard.fxml", user);
-            page.getScene().getWindow().hide();
-            clearForm();
         }
     }
     
     @FXML
-    private void forgotPassword() {
+    private void forgotPassword() { // changing to the forgot password section
+        email.setVisible(true);
         resetPasswordButton.setVisible(true);
         forgotPassword.setVisible(true);
         forgotPassword.setVisible(false);
@@ -98,7 +101,8 @@ public class SignupLoginController {
     
     @FXML
     private void resetPassword() {
-        if (validForm()) {
+        if (validForm()) { // sends user back to log in section after submission
+            email.setVisible(false);
             resetPasswordButton.setVisible(false);
             formButton.setVisible(true);
             forgotPassword.setVisible(true);
@@ -108,6 +112,7 @@ public class SignupLoginController {
             formText.setText("Login Form");
             shortLogin.remove("notActive");
             shortLogin.add("active");
+            
             SQLUtils.resetPassword(username.getText(), password.getText(), email.getText());
             clearForm();
         }
@@ -123,25 +128,22 @@ public class SignupLoginController {
     }
     
     private boolean validForm() {
-        String name = username.getText();
-        String pass = password.getText();
-        String confirmPass = confirmPassword.getText();
-        String mail = email.getText();
+        String name = username.getText(), pass = password.getText(), confirmPass = confirmPassword.getText(), mail = email.getText();
         
         if (isFormEmpty(name, pass, confirmPass, mail)) {
             Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Fields", "All Fields Must Be Filled In");
             return false;
         } else if (signup.getStyleClass().contains("active")) {
-            if (!regexValidation())
+            if (Utils.regexValidation(mail, pass))
                 return false;
             else if (!pass.equals(confirmPass)) {
                 Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Passwords Must Match", "Password And Confirm Password Must Match");
                 return false;
-            } else if (SQLUtils.userExists(name)) {
+            } else if (SQLUtils.getUser(name) != null) {
                 Utils.errorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Already Exists", "Please enter information for a user that does not already exist.");
                 return false;
             }
-        } else if (login.getStyleClass().contains("active") && !SQLUtils.userExists(name)) {
+        } else if (login.getStyleClass().contains("active") && SQLUtils.getUser(name) == null) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Invalid Info", "That User Does Not Exist", "Please enter valid information for a user that does already exists.");
             return false;
         }
@@ -152,35 +154,6 @@ public class SignupLoginController {
     private boolean isFormEmpty(String username, String password, String confirmPass, String email) {
         return username.isEmpty() || password.isEmpty() ||
                 (signup.getStyleClass().contains("active") && (confirmPass.isEmpty() || email.isEmpty()));
-    }
-    
-    private boolean regexValidation() {
-        // region Regex Characters
-        // . any single character
-        // * 0 or more occurrences of the preceding element
-        // + 1 or more occurrence of the preceding element
-        // [] match any character inside brackets
-        // ^ start of a string
-        // $ end of a string
-        // \ escape character
-        // ?=* positive look ahead assertion
-        // ?! negative look ahead assertion
-        // .{8, } at least 8 characters
-        // \\d shortcut for 0-9
-        //endregion
-        
-        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._]+\\.[a-zA-Z]{2,6}$";
-        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[/~`!@#$%^&*()_+{};:',<.>? =]).{8,}$";
-        
-        if (!Pattern.compile(emailRegex).matcher(email.getText()).matches()) {
-            Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Email", "Please Enter A Valid Email That Contains An '@' And A '.com'");
-            return false;
-        } else if (!Pattern.compile(passwordRegex).matcher(password.getText()).matches()) {
-            Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Password", "Please Enter A Valid Password That Contains At Least 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number, and 1 Special Character");
-            return false;
-        }
-        
-        return true;
     }
     // endregion
     

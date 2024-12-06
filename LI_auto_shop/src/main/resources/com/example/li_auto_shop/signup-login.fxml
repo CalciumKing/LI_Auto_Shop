@@ -9,7 +9,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="page" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: midnightblue;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.li_auto_shop.SignupLoginController">
+<AnchorPane fx:id="page" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: midnightblue;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.li_auto_shop.SignupLoginController">
   <AnchorPane prefHeight="400.0" prefWidth="600.0">
     <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="257.0" layoutX="199.0" layoutY="63.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
     <Label fx:id="formText" alignment="CENTER" contentDisplay="CENTER" layoutX="257.0" layoutY="79.0" prefHeight="17.0" prefWidth="86.0" text="Login Form" textAlignment="CENTER">
@@ -31,7 +31,7 @@
         <Font name="System Bold" size="12.0" />
       </font>
     </Button>
-    <TextField fx:id="email" layoutX="225.0" layoutY="146.0" promptText="Email Address:" style="-fx-background-radius: 8px;" />
+    <TextField fx:id="email" layoutX="225.0" layoutY="146.0" promptText="Email Address:" style="-fx-background-radius: 8px;" visible="false" />
     <TextField fx:id="username" layoutX="225.0" layoutY="179.0" promptText="Username:" style="-fx-background-radius: 8px;" />
     <PasswordField fx:id="password" layoutX="225.0" layoutY="211.0" promptText="Password:" style="-fx-background-radius: 8px;" />
     <PasswordField fx:id="confirmPassword" layoutX="225.0" layoutY="243.0" onAction="#formSubmit" promptText="Confirm Password:" style="-fx-background-radius: 8px;" visible="false" />

@@ -15,8 +15,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.io.File;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class Utils {
     private static double xOffset;
@@ -45,6 +45,7 @@ public class Utils {
     }
     // endregion Alert Methods
     
+    // region Random Utils
     public static void changeScene(String sceneName, User user) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName));
@@ -52,7 +53,7 @@ public class Utils {
             
             if (user != null) {
                 DashboardController dashboardController = fxmlLoader.getController();
-                dashboardController.welcomeName(user.getUsername());
+                dashboardController.welcomeName(user);
             }
             
             Stage stage = new Stage();
@@ -75,6 +76,36 @@ public class Utils {
         else
             imageView.setImage(image);
     }
+    
+    public static boolean regexValidation(String email, String password) {
+        // region Regex Characters
+        // . any single character
+        // * 0 or more occurrences of the preceding element
+        // + 1 or more occurrence of the preceding element
+        // [] match any character inside brackets
+        // ^ start of a string
+        // $ end of a string
+        // \ escape character
+        // ?=* positive look ahead assertion
+        // ?! negative look ahead assertion
+        // .{8, } at least 8 characters
+        // \\d shortcut for 0-9
+        //endregion
+        
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._]+\\.[a-zA-Z]{2,6}$";
+        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[/~`!@#$%^&*()_+{};:',<.>? =]).{8,}$";
+        
+        if (!Pattern.compile(emailRegex).matcher(email).matches()) {
+            Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Email", "Please Enter A Valid Email That Contains An '@' And A '.com'");
+            return true;
+        } else if (password != null && !Pattern.compile(passwordRegex).matcher(password).matches()) {
+            Utils.errorAlert(Alert.AlertType.INFORMATION, "Form Validation", "Invalid Password", "Please Enter A Valid Password That Contains At Least 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number, and 1 Special Character");
+            return true;
+        }
+        
+        return false;
+    }
+    // endregion
     
     // region Window Settings
     public static void windowMinimize(ActionEvent event) {

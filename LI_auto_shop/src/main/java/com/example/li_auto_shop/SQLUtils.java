@@ -9,7 +9,7 @@ import java.sql.*;
 public class SQLUtils {
     // region Login/Signup
     public static User login(String username, String password) {
-        String sql = "select * from users_table where username = ? and password = ? and email = ? limit 1;";
+        String sql = "select * from users_table where username = ? and password = ? limit 1;";
         return runFormSQL(sql, username, password, null, true);
     }
     
@@ -21,22 +21,6 @@ public class SQLUtils {
     public static void resetPassword(String username, String newPassword, String email) {
         String sql = "update users_table set password=? where username=? and email=?;";
         runFormSQL(sql, newPassword, username, email, false);
-    }
-    
-    public static boolean userExists(String username) {
-        Connection connection = connectDB();
-        if (connection == null) return false;
-        
-        String sql = "select * from users_table where username = ?;";
-        
-        try (PreparedStatement prepared = connection.prepareStatement(sql)) {
-            prepared.setString(1, username);
-            ResultSet result = prepared.executeQuery();
-            return result.next();
-        } catch (Exception ignored) {
-            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
-            return false;
-        }
     }
     // endregion
     
@@ -76,8 +60,11 @@ public class SQLUtils {
             prepared.setInt(6, reorder_level);
             if (path != null)
                 prepared.setString(7, path);
-            else
-                prepared.setString(7, getItem(id).getPath());
+            else {
+                Item item = getItem(id);
+                if (item == null) return;
+                prepared.setString(7, item.getPath());
+            }
             prepared.setString(8, id);
             prepared.executeUpdate();
         } catch (Exception ignored) {
@@ -150,11 +137,10 @@ public class SQLUtils {
         } catch (Exception ignored) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Get Item Error", "Error Getting Item From Database", "There was an error getting an item from the database, please try again.");
         }
-        
         return null;
     }
     
-    public static void addTransaction(Date date, String username, String item_ID, int adjustment) {
+    public static void addTransaction(Date date, String username) {
         Connection connection = connectDB();
         if (connection == null) return;
         
@@ -165,16 +151,20 @@ public class SQLUtils {
             prepared.executeUpdate();
         } catch (Exception ignored) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Error in addTransaction", "Error Adding Transaction To Database", "There was an error adding a transaction to the database, please try again.");
-            return;
         }
+    }
+    
+    public static void addAdjustment(String item_ID, int adjustment) {
+        Connection connection = connectDB();
+        if (connection == null) return;
         
-        sql = "insert into item_adjust (trans_ID, item_ID, adjustment) values ((select max(trans_ID) from transactions), ?, ?);";
+        String sql = "insert into item_adjust (trans_ID, item_ID, adjustment) values ((select max(trans_ID) from transactions), ?, ?);";
         try (PreparedStatement prepared = connection.prepareStatement(sql)) {
             prepared.setString(1, item_ID);
             prepared.setInt(2, adjustment);
             prepared.executeUpdate();
-        } catch (Exception ignored) {
-            Utils.errorAlert(Alert.AlertType.ERROR, "Error in addTransaction", "Error Adding Item Adjustment To Database", "There was an error adding an item adjustment to the database, please try again.");
+        } catch (Exception e) {
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error in addAdjustment", "Error Adding Item Adjustment To Database", "There was an error adding an item adjustment to the database, please try again.");
         }
     }
     // endregion
@@ -298,7 +288,6 @@ public class SQLUtils {
             return data;
         } catch (Exception e) {
             Utils.errorAlert(Alert.AlertType.ERROR, "Error in getTransaction", "Error Getting Transactions From Database", "There was an error getting transactions from the database, please try again.");
-            e.printStackTrace();
         }
         
         return null;
@@ -327,19 +316,22 @@ public class SQLUtils {
                 prepared.setString(3, email);
             
             if (query) {
-                prepared.executeQuery();
-                return getUser(username);
-//                return new User(username, password, email, -1, null);
+                ResultSet result = prepared.executeQuery();
+                
+                if (result.next())
+                    return new User(
+                            result.getString("username"),
+                            result.getString("password"),
+                            result.getString("email"),
+                            result.getInt("grade"),
+                            result.getString("image_path"));
             } else {
                 prepared.executeUpdate();
-                sql = "select * from users_table where username = ? and password = ? and email = ?;";
-                return runFormSQL(sql, username, password, email, true);
+                sql = "select * from users_table where username = ? and password = ? and email = ? limit 1;";
+                return runFormSQL(sql, username, password, email, true); // gets the user from the database after creating it, only does recursion once
             }
-            
-        } catch (SQLException ignored) {
-            Utils.errorAlert(Alert.AlertType.ERROR, "SQL Error", "Error Retrieving SQL Information, from RunFormSQL", "There was an error retrieving the SQL information.");
         } catch (Exception ignored) {
-            Utils.errorAlert(Alert.AlertType.ERROR, "Error", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
+            Utils.errorAlert(Alert.AlertType.ERROR, "Error in runFormSQL", "Error Running SQL", "There was an error running the SQL information, or that user doesn't exist.");
         }
         return null;
     }

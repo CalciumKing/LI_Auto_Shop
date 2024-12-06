@@ -114,7 +114,7 @@
             <Font name="System Bold" size="12.0" />
         </font>
     </Button>
-    <Button layoutX="13.0" layoutY="256.0" mnemonicParsing="false" onAction="#usersPage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Users" textFill="WHITE">
+    <Button fx:id="users_page_btn" layoutX="13.0" layoutY="256.0" mnemonicParsing="false" onAction="#usersPage" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: midnightblue;" text="Users" textFill="WHITE" visible="false">
         <font>
             <Font name="System Bold" size="12.0" />
         </font>
